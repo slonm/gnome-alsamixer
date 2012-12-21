@@ -440,6 +440,7 @@ gam_prefs_dlg_response_handler (GtkDialog *dialog, gint res_id, GamPrefsDlg *gam
                 gam_mixer_construct_sliders (mixer);
                 gam_mixer_set_display_name (mixer, gtk_entry_get_text (entry));
                 gam_mixer_set_visible (mixer, gtk_toggle_button_get_active (toggle));
+                gam_mixer_update_visibility(mixer);
             }
 
             gtk_widget_destroy (GTK_WIDGET (dialog));

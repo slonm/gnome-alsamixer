@@ -423,16 +423,12 @@ gam_mixer_construct_elements (GamMixer *gam_mixer)
                   toggle = gam_enum_new (elem, gam_mixer, GAM_APP (priv->app));
                   gtk_box_pack_start (GTK_BOX (vbox),
                                       toggle, FALSE, FALSE, 0);
-                  if (gam_enum_get_visible (GAM_ENUM (toggle)))
-                      gtk_widget_show (toggle);
                 }  
                 else
                 {    
                   toggle = gam_toggle_new (elem, gam_mixer, GAM_APP (priv->app));
                   gtk_box_pack_start (GTK_BOX (vbox),
                                       toggle, FALSE, FALSE, 0);
-                  if (gam_toggle_get_visible (GAM_TOGGLE (toggle)))
-                      gtk_widget_show (toggle);
                 }
                 
                 priv->toggles = g_slist_append (priv->toggles, toggle);
@@ -726,9 +722,6 @@ gam_mixer_construct_sliders (GamMixer *gam_mixer)
                 gtk_box_pack_start (GTK_BOX (priv->slider_box),
                                     slider, TRUE, TRUE, 0);
 
-                if (gam_slider_get_visible (GAM_SLIDER (slider)))
-                    gtk_widget_show (slider);
-
                 priv->sliders = g_slist_append (priv->sliders, slider);
             }
         }
@@ -752,3 +745,101 @@ gam_mixer_create_elem_name(snd_mixer_elem_t *elem){
         memcpy(s, "S/PDIF", 6);
     return name;
 }
+
+void
+gam_mixer_update_visibility(GamMixer *gam_mixer){
+    int i;  
+    
+    for (i = 0; i < gam_mixer_slider_count (gam_mixer); i++)
+        gam_slider_update_visibility(gam_mixer_get_nth_slider (gam_mixer, i));
+    for (i = 0; i < gam_mixer_toggle_count (gam_mixer); i++) {
+        if(GAM_IS_ENUM(gam_mixer_get_nth_toggle (gam_mixer, i)))
+        {
+          gam_enum_update_visibility(GAM_ENUM(gam_mixer_get_nth_toggle (gam_mixer, i)));
+        }    
+        else
+        {    
+          gam_toggle_update_visibility(GAM_TOGGLE(gam_mixer_get_nth_toggle (gam_mixer, i)));
+        }
+    }
+    
+    gam_mixer_set_display_name (gam_mixer, gam_mixer_get_display_name (gam_mixer));
+    
+}
+
+gboolean
+gam_mixer_get_show_playback_elements (GamMixer *gam_mixer)
+{
+    GamMixerPrivate *priv;
+    gboolean show;
+    gchar *key;
+    
+    g_return_if_fail (GAM_IS_MIXER (gam_mixer));
+
+    priv = GAM_MIXER_GET_PRIVATE (gam_mixer);
+
+    key = g_strdup_printf ("/apps/gnome-alsamixer/display_mixers/%s_playback",
+                           gam_mixer_get_config_name (gam_mixer));
+    
+    show = gconf_client_get_bool (gam_app_get_gconf_client (priv->app),
+                           key,
+                           NULL);
+    g_free(key);
+    
+    return show;
+}
+
+gboolean
+gam_mixer_get_show_capture_elements (GamMixer *gam_mixer)
+{
+    GamMixerPrivate *priv;
+    gboolean show;
+    gchar *key;
+    
+    g_return_if_fail (GAM_IS_MIXER (gam_mixer));
+
+    priv = GAM_MIXER_GET_PRIVATE (gam_mixer);
+
+    key = g_strdup_printf ("/apps/gnome-alsamixer/display_mixers/%s_capture",
+                           gam_mixer_get_config_name (gam_mixer));
+    
+    show = gconf_client_get_bool (gam_app_get_gconf_client (priv->app),
+                           key,
+                           NULL);
+    
+    g_free(key);
+    return show;
+}
+
+void
+gam_mixer_set_capture_playback (GamMixer *gam_mixer, gboolean playback, gboolean capture)
+{
+    GamMixerPrivate *priv;
+    gchar *key;
+
+    g_return_if_fail (GAM_IS_MIXER (gam_mixer));
+
+    priv = GAM_MIXER_GET_PRIVATE (gam_mixer);
+
+    key = g_strdup_printf ("/apps/gnome-alsamixer/display_mixers/%s_capture",
+                           gam_mixer_get_config_name (gam_mixer));
+    
+    gconf_client_set_bool (gam_app_get_gconf_client (priv->app),
+                           key,
+                           capture,
+                           NULL);
+
+    g_free(key);
+    
+    key = g_strdup_printf ("/apps/gnome-alsamixer/display_mixers/%s_playback",
+                           gam_mixer_get_config_name (gam_mixer));
+    
+    gconf_client_set_bool (gam_app_get_gconf_client (priv->app),
+                           key,
+                           playback,
+                           NULL);
+    
+    g_free(key);
+    gconf_client_suggest_sync (gam_app_get_gconf_client (priv->app), NULL);
+}
+

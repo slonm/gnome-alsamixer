@@ -77,6 +77,12 @@ void                  gam_mixer_construct_sliders (GamMixer    *gam_mixer);
 
 const char           *gam_mixer_create_elem_name(snd_mixer_elem_t *elem);
 
+gboolean     gam_mixer_get_show_playback_elements (GamMixer              *gam_mixer);
+
+gboolean     gam_mixer_get_show_capture_elements (GamMixer              *gam_mixer);
+
+void gam_mixer_set_capture_playback (GamMixer *gam_mixer, gboolean playback, gboolean capture);
+
 G_END_DECLS
 
 #endif /* __GAM_MIXER_H__ */

@@ -48,6 +48,7 @@ struct _GamAppPrivate
     GtkActionGroup *main_action_group;
     gint            num_cards;
     guint           tip_message_cid;
+    gboolean        view_mixers_cb_active;
 };
 
 static void      gam_app_class_init                    (GamAppClass           *klass);
@@ -69,6 +70,8 @@ static void      gam_app_preferences_cb                (GtkMenuItem           *m
                                                         GamApp                *gam_app);
 static void      gam_app_properties_cb                 (GtkMenuItem           *menuitem,
                                                         GamApp                *gam_app);
+static void      gam_app_view_mixers_cb                 (GtkAction *action, GtkRadioAction *current,
+                                                        GamApp                *gam_app);
 static void      gam_app_mixer_display_name_changed_cb (GamMixer              *gam_mixer,
                                                         GamApp                *gam_app);
 static void      gam_app_mixer_visibility_changed_cb   (GamMixer              *gam_mixer,
@@ -85,17 +88,34 @@ static void      gam_app_ui_disconnect_proxy_cb        (GtkUIManager          *m
                                                         GtkAction             *action,
                                                         GtkWidget             *proxy,
                                                         GamApp                *gam_app);
+static void      gam_app_notebook_switch_page_cb          (GtkNotebook       *notebook,
+                                                        gpointer         page,
+                                                        guint            page_num,
+                                                        GamApp                *gam_app);
 
 static gpointer parent_class;
 
 static GtkActionEntry action_entries[] = {
   { "FileMenu", NULL, N_("_File") },
   { "EditMenu", NULL, N_("_Edit") },
+  { "ViewMenu", NULL, N_("_View") },
   { "HelpMenu", NULL, N_("_Help") },
   { "Exit", GTK_STOCK_OPEN, N_("E_xit"), "<control>Q", N_("Exit the program"), G_CALLBACK (gam_app_quit_cb) },
   { "Properties", GTK_STOCK_PROPERTIES, N_("Sound Card _Properties"), "", N_("Configure the current sound card"), G_CALLBACK (gam_app_properties_cb) },
   { "Preferences", GTK_STOCK_PREFERENCES, N_("Program Prefere_nces"), "", N_("Configure the application"), G_CALLBACK (gam_app_preferences_cb) },
-  { "About", GNOME_STOCK_ABOUT, N_("_About"), "", N_("About this application"), G_CALLBACK (gam_app_about_cb) },
+  { "About", GNOME_STOCK_ABOUT, N_("_About"), "", N_("About this application"), G_CALLBACK (gam_app_about_cb) }
+};
+
+enum{
+  VIEW_ALL, 
+  VIEW_PLAYBACK, 
+  VIEW_CAPTURE
+};
+
+static GtkRadioActionEntry radio_action_entries[] = {
+  { "All", NULL, N_("A_ll"), "F5", N_("All elements"),  VIEW_ALL},
+  { "Playback", NULL, N_("Pla_yback"), "F3", N_("Playback elements"), VIEW_PLAYBACK },
+  { "Capture", NULL, N_("_Capture"), "F4", N_("Capture elements"), VIEW_CAPTURE }
 };
 
 static const gchar *ui_description =
@@ -107,6 +127,11 @@ static const gchar *ui_description =
 "    <menu action='EditMenu' name='EditMenu'>"
 "      <menuitem action='Properties'/>"
 "      <menuitem action='Preferences'/>"
+"    </menu>"
+"    <menu action='ViewMenu' name='ViewMenu'>"
+"      <menuitem action='All'/>"
+"      <menuitem action='Playback'/>"
+"      <menuitem action='Capture'/>"
 "    </menu>"
 "    <menu action='HelpMenu'>"
 "      <menuitem action='About'/>"
@@ -189,6 +214,7 @@ gam_app_init (GamApp *gam_app)
     priv->notebook = gtk_notebook_new ();
     gtk_notebook_set_scrollable (GTK_NOTEBOOK (priv->notebook), TRUE);
     gtk_notebook_set_tab_pos (GTK_NOTEBOOK (priv->notebook), GTK_POS_TOP);
+    priv->view_mixers_cb_active=TRUE;
 }
 
 static gboolean
@@ -267,6 +293,12 @@ gam_app_constructor (GType                  type,
     gtk_action_group_add_actions (priv->main_action_group, action_entries,
                                   G_N_ELEMENTS (action_entries), gam_app);
 
+    gtk_action_group_add_radio_actions (priv->main_action_group, 
+                                  radio_action_entries,
+                                  G_N_ELEMENTS (radio_action_entries),
+                                  VIEW_ALL,
+                                  G_CALLBACK (gam_app_view_mixers_cb), 
+                                  gam_app);
     gtk_ui_manager_insert_action_group (priv->ui_manager, priv->main_action_group, 0);
 
     gtk_window_add_accel_group (GTK_WINDOW (gam_app), priv->ui_accel_group);
@@ -306,6 +338,8 @@ gam_app_constructor (GType                  type,
             gtk_label_set_justify (GTK_LABEL (label), GTK_JUSTIFY_LEFT);
 
             gtk_notebook_append_page (GTK_NOTEBOOK (priv->notebook), mixer, label);
+            
+            gam_mixer_update_visibility(mixer);
         }
 
         g_free (card);
@@ -326,6 +360,9 @@ gam_app_constructor (GType                  type,
 
     gtk_box_pack_start (GTK_BOX (main_box), priv->notebook, TRUE, TRUE, 0);
 
+    g_signal_connect (G_OBJECT (priv->notebook), "switch-page",
+                      G_CALLBACK (gam_app_notebook_switch_page_cb), gam_app);
+    gam_app_notebook_switch_page_cb(NULL, NULL, 0, gam_app);
     gtk_widget_show (priv->notebook);
 
     gam_app_load_prefs (gam_app);
@@ -336,7 +373,6 @@ gam_app_constructor (GType                  type,
                              pawed_app,
                              NULL,
                              NULL);*/
-
     return object;
 }
 
@@ -361,6 +397,7 @@ gam_app_load_prefs (GamApp *gam_app)
         gtk_window_resize (GTK_WINDOW (gam_app), width, height);
     else /* This is really pedantic, since it is very unlikely to ever happen */
         gtk_window_set_default_size (GTK_WINDOW (gam_app), 480, 350);
+    
 }
 
 static void
@@ -485,18 +522,55 @@ gam_app_properties_cb (GtkMenuItem *menuitem, GamApp *gam_app)
 }
 
 static void
+gam_app_view_mixers_cb (GtkAction *action, GtkRadioAction *current, GamApp *gam_app)
+{
+    GamAppPrivate *priv;
+    g_return_if_fail (GAM_IS_MIXER (gam_mixer));
+    priv = GAM_APP_GET_PRIVATE (gam_app);
+    
+    GamMixer *gam_mixer=gam_app_get_current_mixer(gam_app);
+
+    if(priv->view_mixers_cb_active){
+        int playback=TRUE;
+        int capture=TRUE;
+
+        switch(gtk_radio_action_get_current_value(GTK_RADIO_ACTION (action))){
+            case VIEW_PLAYBACK:
+                capture=FALSE;
+                break;
+            case VIEW_CAPTURE:
+                playback=FALSE;
+                break;
+        };
+
+        gam_mixer_set_capture_playback(gam_mixer, playback, capture);
+
+    }    
+    
+    gam_mixer_update_visibility(gam_mixer);
+}
+
+static void
 gam_app_mixer_display_name_changed_cb (GamMixer *gam_mixer, GamApp *gam_app)
 {
     GamAppPrivate *priv;
-
+    gchar *name;
     g_return_if_fail (GAM_IS_APP (gam_app));
     g_return_if_fail (GAM_IS_MIXER (gam_mixer));
 
     priv = GAM_APP_GET_PRIVATE (gam_app);
-
+    
+    if(gam_mixer_get_show_capture_elements(gam_mixer)
+            &&gam_mixer_get_show_playback_elements(gam_mixer))
+      name=gam_mixer_get_display_name (gam_mixer);
+    else if(gam_mixer_get_show_capture_elements(gam_mixer))
+      name=g_strdup_printf("%s (Capture)", gam_mixer_get_display_name (gam_mixer));  
+    else 
+      name=g_strdup_printf("%s (Playback)", gam_mixer_get_display_name (gam_mixer));  
     gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (priv->notebook),
                                      GTK_WIDGET (gam_mixer),
-                                     gam_mixer_get_display_name (gam_mixer));
+                                     name);
+    g_free(name);
 }
 
 static void
@@ -685,4 +759,60 @@ gam_app_set_slider_toggle_style (GamApp *gam_app, gint style)
                            NULL);
 
     gconf_client_suggest_sync (gam_app_get_gconf_client (gam_app), NULL);
+}
+
+void
+gam_app_update_visibility (GamApp *gam_app, GtkWidget *widget, 
+        snd_mixer_elem_t *elem, gboolean saved_state){
+    
+    g_return_if_fail (GAM_IS_APP (gam_app));
+    
+    GamMixer *gam_mixer=gam_app_get_current_mixer(gam_app);
+    
+    int is_playback= snd_mixer_selem_has_playback_volume(elem)
+                  || snd_mixer_selem_has_playback_switch(elem)
+                  || (snd_mixer_selem_is_enumerated(elem) 
+                    && snd_mixer_selem_is_enum_playback(elem));
+    int is_capture = snd_mixer_selem_has_capture_volume(elem)
+                  || snd_mixer_selem_has_capture_switch(elem)
+                  || (snd_mixer_selem_is_enumerated(elem) 
+                    && snd_mixer_selem_is_enum_capture(elem));
+    //If nothing showed set show all
+    if(!(gam_mixer_get_show_playback_elements(gam_mixer)||gam_mixer_get_show_capture_elements(gam_mixer)))
+       gam_mixer_set_capture_playback(gam_app_get_current_mixer(gam_app), TRUE, TRUE);
+    
+    if(saved_state
+       && ((is_playback && gam_mixer_get_show_playback_elements(gam_mixer))
+       || (is_capture && gam_mixer_get_show_capture_elements(gam_mixer))))
+      gtk_widget_show(widget);
+    else        
+      gtk_widget_hide(widget);
+}
+
+static void      gam_app_notebook_switch_page_cb          (GtkNotebook       *notebook,
+                                                        gpointer         page,
+                                                        guint            page_num,
+                                                        GamApp                *gam_app){
+    GamAppPrivate *priv;
+
+    g_return_if_fail (GAM_IS_APP (gam_app));
+
+    priv = GAM_APP_GET_PRIVATE (gam_app);
+    
+    priv->view_mixers_cb_active=FALSE;
+    
+    GamMixer *gam_mixer=gam_app_get_mixer(gam_app, page_num);
+    
+    gboolean playback=gam_mixer_get_show_playback_elements(gam_mixer);
+    gboolean capture=gam_mixer_get_show_capture_elements(gam_mixer);
+    
+    if(playback&&capture)
+      gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (gtk_action_group_get_action (priv->main_action_group, "All")), TRUE);        
+    else if(playback&&!capture)
+      gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (gtk_action_group_get_action (priv->main_action_group, "Playback")), TRUE);        
+    else if(!playback&&capture)
+      gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (gtk_action_group_get_action (priv->main_action_group, "Capture")), TRUE);        
+    priv->view_mixers_cb_active=TRUE;
+    
+    gam_mixer_set_display_name (gam_mixer, gam_mixer_get_display_name (gam_mixer));
 }

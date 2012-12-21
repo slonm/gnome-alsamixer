@@ -239,6 +239,9 @@ gam_slider_constructor (GType                  type,
                         separator, FALSE, TRUE, 0);
 
     priv->label = gtk_label_new_with_mnemonic (gam_slider_get_display_name (gam_slider));
+    /*g_object_set(priv->label,"width_chars", 8, NULL);
+    g_object_set(priv->label,"wrap", TRUE, NULL);*/
+    g_object_set(priv->label,"justify", GTK_JUSTIFY_CENTER, NULL);
     gtk_widget_show (priv->label);
 
     gtk_box_pack_start (GTK_BOX (priv->vbox),
@@ -584,11 +587,8 @@ gam_slider_set_visible (GamSlider *gam_slider, gboolean visible)
                            NULL);
 
     gconf_client_suggest_sync (gam_app_get_gconf_client (GAM_APP (priv->app)), NULL);
-
-    if (visible)
-        gtk_widget_show (GTK_WIDGET (gam_slider));
-    else
-        gtk_widget_hide (GTK_WIDGET (gam_slider));
+    
+    gam_app_update_visibility(GAM_APP (priv->app), GTK_WIDGET (gam_slider), priv->elem, visible);
 
     g_free (key);
 }
@@ -682,3 +682,14 @@ gam_slider_add_volume_widget (GamSlider *gam_slider, GtkWidget *widget)
 
     gtk_box_reorder_child (GTK_BOX (priv->vbox), widget, 1);
 }
+
+void
+gam_slider_update_visibility (GamSlider *gam_slider){
+    GamSliderPrivate *priv;
+
+    g_return_if_fail (GAM_IS_ENUM (gam_slider));
+
+    priv = GAM_SLIDER_GET_PRIVATE (gam_slider);
+
+    gam_app_update_visibility(GAM_APP (priv->app), GTK_WIDGET (gam_slider), priv->elem, gam_slider_get_visible (gam_slider));
+} 

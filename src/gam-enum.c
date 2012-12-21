@@ -554,9 +554,16 @@ gam_enum_set_visible (GamEnum *gam_enum, gboolean visible)
 
     gconf_client_suggest_sync (gam_app_get_gconf_client (GAM_APP (priv->app)), NULL);
 
-    if (visible)
-        gtk_widget_show (GTK_WIDGET (gam_enum));
-    else
-        gtk_widget_hide (GTK_WIDGET (gam_enum));
+    gam_app_update_visibility(GAM_APP (priv->app), GTK_WIDGET (gam_enum), priv->elem, visible);
 }
 
+void
+gam_enum_update_visibility (GamEnum *gam_enum){
+    GamEnumPrivate *priv;
+
+    g_return_if_fail (GAM_IS_ENUM (gam_enum));
+
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
+
+    gam_app_update_visibility(GAM_APP (priv->app), GTK_WIDGET (gam_enum), priv->elem, gam_enum_get_visible (gam_enum));
+} 

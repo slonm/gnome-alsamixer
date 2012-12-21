@@ -78,6 +78,7 @@ void                  gam_slider_add_pan_widget     (GamSlider   *gam_slider,
                                                      GtkWidget   *widget);
 void                  gam_slider_add_volume_widget  (GamSlider   *gam_slider,
                                                      GtkWidget   *widget);
+void gam_slider_update_visibility (GamSlider *gam_slider);
 
 G_END_DECLS
 

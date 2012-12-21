@@ -63,6 +63,7 @@ void                  gam_enum_set_display_name (GamEnum        *gam_enum,
 gboolean              gam_enum_get_visible      (GamEnum        *gam_enum);
 void                  gam_enum_set_visible      (GamEnum        *gam_enum,
                                                    gboolean          visible);
+void gam_enum_update_visibility (GamEnum *gam_enum);
 
 G_END_DECLS
 

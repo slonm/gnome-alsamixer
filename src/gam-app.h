@@ -64,6 +64,9 @@ gint         gam_app_get_slider_toggle_style (GamApp *gam_app);
 void         gam_app_set_slider_toggle_style (GamApp *gam_app,
                                               gint    style);
 
+void         gam_app_update_visibility (GamApp *gam_app, GtkWidget *widget, 
+                      snd_mixer_elem_t *elem, gboolean saved_state);
+
 G_END_DECLS
 
 #endif /* __GAM_APP_H__ */

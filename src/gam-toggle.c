@@ -506,8 +506,16 @@ gam_toggle_set_visible (GamToggle *gam_toggle, gboolean visible)
 
     gconf_client_suggest_sync (gam_app_get_gconf_client (GAM_APP (priv->app)), NULL);
 
-    if (visible)
-        gtk_widget_show (GTK_WIDGET (gam_toggle));
-    else
-        gtk_widget_hide (GTK_WIDGET (gam_toggle));
+    gam_app_update_visibility(GAM_APP (priv->app), GTK_WIDGET (gam_toggle), priv->elem, visible);
 }
+
+void
+gam_toggle_update_visibility (GamToggle *gam_toggle){
+    GamTogglePrivate *priv;
+
+    g_return_if_fail (GAM_IS_TOGGLE (gam_toggle));
+
+    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+
+    gam_app_update_visibility(GAM_APP (priv->app), GTK_WIDGET (gam_toggle), priv->elem, gam_toggle_get_visible (gam_toggle));
+} 

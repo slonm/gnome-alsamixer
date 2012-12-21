@@ -63,6 +63,7 @@ void                  gam_toggle_set_display_name (GamToggle        *gam_toggle,
 gboolean              gam_toggle_get_visible      (GamToggle        *gam_toggle);
 void                  gam_toggle_set_visible      (GamToggle        *gam_toggle,
                                                    gboolean          visible);
+void gam_toggle_update_visibility (GamToggle *gam_toggle);
 
 G_END_DECLS
 

@@ -26,8 +26,6 @@
 
 #include "gam-props-dlg.h"
 #include "gam-slider.h"
-#include <gtk/gtkbutton.h>
-#include <glib-2.0/glib/gtypes.h>
 
 enum {
     PROP_0,
