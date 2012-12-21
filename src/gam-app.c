@@ -631,12 +631,11 @@ gint
 gam_app_get_mixer_slider_style (GamApp *gam_app)
 {
     const gchar *key = "/apps/gnome-alsamixer/geometry/mixer_slider_style";
-    gint style = 0;
+    gint style;
 
     g_return_if_fail (GAM_IS_APP (gam_app));
 
-    if (gconf_client_dir_exists (gam_app_get_gconf_client (gam_app), key, NULL))
-        style = gconf_client_get_int (gam_app_get_gconf_client (gam_app),
+    style = gconf_client_get_bool (gam_app_get_gconf_client (gam_app),
                                       key,
                                       NULL);
 
@@ -662,12 +661,11 @@ gint
 gam_app_get_slider_toggle_style (GamApp *gam_app)
 {
     const gchar *key = "/apps/gnome-alsamixer/geometry/mixer_slider_toggle_style";
-    gint style = 1;
+    gint style;
 
     g_return_if_fail (GAM_IS_APP (gam_app));
 
-    if (gconf_client_dir_exists (gam_app_get_gconf_client (gam_app), key, NULL))
-        style = gconf_client_get_int (gam_app_get_gconf_client (gam_app),
+    style = gconf_client_get_bool (gam_app_get_gconf_client (gam_app),
                                       key,
                                       NULL);
 
@@ -678,7 +676,7 @@ void
 gam_app_set_slider_toggle_style (GamApp *gam_app, gint style)
 {
     const gchar *key = "/apps/gnome-alsamixer/geometry/mixer_slider_toggle_style";
-
+    
     g_return_if_fail (GAM_IS_APP (gam_app));
 
     gconf_client_set_bool (gam_app_get_gconf_client (gam_app),

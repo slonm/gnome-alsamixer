@@ -472,7 +472,8 @@ gchar *
 gam_mixer_get_display_name (GamMixer *gam_mixer)
 {
     GamMixerPrivate *priv;
-    gchar *key, *name;
+    gchar *key, *name = NULL;
+    GConfEntry* entry;
 
     g_return_val_if_fail (GAM_IS_MIXER (gam_mixer), NULL);
 
@@ -481,7 +482,15 @@ gam_mixer_get_display_name (GamMixer *gam_mixer)
     key = g_strdup_printf ("/apps/gnome-alsamixer/display_names/%s",
                            gam_mixer_get_config_name (gam_mixer));
 
-    name = gconf_client_get_string (gam_app_get_gconf_client (GAM_APP (priv->app)),
+    entry=gconf_client_get_entry(gam_app_get_gconf_client (GAM_APP (priv->app)),
+                                         key,
+                                         NULL,
+                                         FALSE,
+                                         NULL);
+    
+    if (gconf_entry_get_value (entry) != NULL && 
+      gconf_entry_get_value (entry)->type == GCONF_VALUE_STRING)
+      name = gconf_client_get_string (gam_app_get_gconf_client (GAM_APP (priv->app)),
                                     key,
                                     NULL);
 
@@ -521,6 +530,7 @@ gam_mixer_get_visible (GamMixer *gam_mixer)
     GamMixerPrivate *priv;
     gchar *key;
     gboolean visible = TRUE;
+    GConfEntry* entry;
 
     g_return_if_fail (GAM_IS_MIXER (gam_mixer));
 
@@ -529,8 +539,15 @@ gam_mixer_get_visible (GamMixer *gam_mixer)
     key = g_strdup_printf ("/apps/gnome-alsamixer/display_mixers/%s",
                            gam_mixer_get_config_name (gam_mixer));
 
-    if (gconf_client_dir_exists (gam_app_get_gconf_client (GAM_APP (priv->app)), key, NULL))
-        visible = gconf_client_get_bool (gam_app_get_gconf_client (GAM_APP (priv->app)),
+    entry=gconf_client_get_entry(gam_app_get_gconf_client (GAM_APP (priv->app)),
+                                         key,
+                                         NULL,
+                                         FALSE,
+                                         NULL);
+    
+    if (gconf_entry_get_value (entry) != NULL && 
+      gconf_entry_get_value (entry)->type == GCONF_VALUE_BOOL)
+      visible = gconf_client_get_bool (gam_app_get_gconf_client (GAM_APP (priv->app)),
                                          key,
                                          NULL);
 
@@ -722,4 +739,3 @@ gam_mixer_create_elem_name(snd_mixer_elem_t *elem){
         memcpy(s, "S/PDIF", 6);
     return name;
 }
-

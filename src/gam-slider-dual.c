@@ -119,10 +119,7 @@ gam_slider_dual_init (GamSliderDual *gam_slider_dual)
 
     priv = GAM_SLIDER_DUAL_GET_PRIVATE (gam_slider_dual);
 
-    g_object_get (G_OBJECT (gam_slider_dual),
-                  "app", &priv->app,
-                  NULL);
-
+    priv->app = NULL;
     priv->lock_button = NULL;
     priv->vol_slider_left = NULL;
     priv->vol_slider_right = NULL;
@@ -142,8 +139,6 @@ gam_slider_dual_finalize (GObject *object)
     gam_slider_dual = GAM_SLIDER_DUAL (object);
 
     priv = GAM_SLIDER_DUAL_GET_PRIVATE (gam_slider_dual);
-
-    g_object_unref (priv->app);
 
     priv->app = NULL;
     priv->vol_adjustment_left = NULL;
@@ -172,6 +167,10 @@ gam_slider_dual_constructor (GType                  type,
     gam_slider_dual = GAM_SLIDER_DUAL (object);
 
     priv = GAM_SLIDER_DUAL_GET_PRIVATE (gam_slider_dual);
+
+    g_object_get (G_OBJECT (gam_slider_dual),
+                  "app", &priv->app,
+                  NULL);
 
     hbox = gtk_hbox_new (FALSE, 0);
     gtk_widget_show (hbox);
@@ -417,6 +416,7 @@ gam_slider_dual_get_locked (GamSliderDual *gam_slider_dual)
     GamSliderDualPrivate *priv;
     gchar *key;
     gboolean locked = TRUE;
+    GConfEntry* entry;
 
     g_return_if_fail (GAM_IS_SLIDER_DUAL (gam_slider_dual));
 
@@ -426,8 +426,15 @@ gam_slider_dual_get_locked (GamSliderDual *gam_slider_dual)
                            gam_mixer_get_config_name (gam_slider_get_mixer (GAM_SLIDER (gam_slider_dual))),
                            gam_slider_get_config_name (GAM_SLIDER (gam_slider_dual)));
 
-    if (gconf_client_dir_exists (gam_app_get_gconf_client (GAM_APP (priv->app)), key, NULL))
-        locked = gconf_client_get_bool (gam_app_get_gconf_client (GAM_APP (priv->app)),
+    entry=gconf_client_get_entry(gam_app_get_gconf_client (GAM_APP (priv->app)),
+                                         key,
+                                         NULL,
+                                         FALSE,
+                                         NULL);
+    
+    if (gconf_entry_get_value (entry) != NULL && 
+      gconf_entry_get_value (entry)->type == GCONF_VALUE_BOOL)
+      locked = gconf_client_get_bool (gam_app_get_gconf_client (GAM_APP (priv->app)),
                                         key,
                                         NULL);
 

@@ -473,7 +473,8 @@ gchar *
 gam_slider_get_display_name (GamSlider *gam_slider)
 {
     GamSliderPrivate *priv;
-    gchar *key, *name, *disp_name;
+    gchar *key, *name = NULL, *disp_name;
+    GConfEntry* entry;
 
     g_return_val_if_fail (GAM_IS_SLIDER (gam_slider), NULL);
 
@@ -485,7 +486,15 @@ gam_slider_get_display_name (GamSlider *gam_slider)
                            gam_mixer_get_config_name (GAM_MIXER (priv->mixer)),
                            gam_slider_get_config_name (gam_slider));
 
-    name = gconf_client_get_string (gam_app_get_gconf_client (GAM_APP (priv->app)),
+    entry=gconf_client_get_entry(gam_app_get_gconf_client (GAM_APP (priv->app)),
+                                         key,
+                                         NULL,
+                                         FALSE,
+                                         NULL);
+    
+    if (gconf_entry_get_value (entry) != NULL && 
+      gconf_entry_get_value (entry)->type == GCONF_VALUE_STRING)
+      name = gconf_client_get_string (gam_app_get_gconf_client (GAM_APP (priv->app)),
                                     key,
                                     NULL);
 
@@ -528,6 +537,7 @@ gam_slider_get_visible (GamSlider *gam_slider)
     GamSliderPrivate *priv;
     gchar *key;
     gboolean visible = TRUE;
+    GConfEntry* entry;
 
     g_return_if_fail (GAM_IS_SLIDER (gam_slider));
 
@@ -537,11 +547,18 @@ gam_slider_get_visible (GamSlider *gam_slider)
                            gam_mixer_get_config_name (GAM_MIXER (priv->mixer)),
                            gam_slider_get_config_name (gam_slider));
 
-    if (gconf_client_dir_exists (gam_app_get_gconf_client (GAM_APP (priv->app)), key, NULL))
-        visible = gconf_client_get_bool (gam_app_get_gconf_client (GAM_APP (priv->app)),
+    entry=gconf_client_get_entry(gam_app_get_gconf_client (GAM_APP (priv->app)),
+                                         key,
+                                         NULL,
+                                         FALSE,
+                                         NULL);
+    
+    if (gconf_entry_get_value (entry) != NULL && 
+      gconf_entry_get_value (entry)->type == GCONF_VALUE_BOOL)
+      visible = gconf_client_get_bool (gam_app_get_gconf_client (GAM_APP (priv->app)),
                                          key,
                                          NULL);
-
+    
     g_free (key);
 
     return visible;
