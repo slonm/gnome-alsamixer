@@ -81,7 +81,6 @@ static gint     gam_slider_capture_button_toggled_cb (GtkWidget             *wid
                                                       GamSlider             *gam_slider);
 static gint     gam_slider_refresh                   (snd_mixer_elem_t      *elem,
                                                       guint                  mask);
-static void     gam_slider_real_refresh              (GamSlider             *gam_slider);
 static gint     gam_slider_get_widget_position       (GamSlider             *gam_slider,
                                                       GtkWidget             *widget);
 
@@ -118,7 +117,6 @@ static void
 gam_slider_class_init (GamSliderClass *klass)
 {
     GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-    GtkObjectClass *object_class = (GtkObjectClass*) klass;
 
     parent_class = g_type_class_peek_parent (klass);
 
@@ -217,7 +215,7 @@ gam_slider_constructor (GType                  type,
     GObject *object;
     GamSlider *gam_slider;
     GamSliderPrivate *priv;
-    GtkWidget *label, *separator;
+    GtkWidget *separator;
     gint value;
 
     object = (* G_OBJECT_CLASS (parent_class)->constructor) (type,
@@ -438,6 +436,8 @@ gam_slider_refresh (snd_mixer_elem_t *elem, guint mask)
     }
 
     g_signal_emit (gam_slider, signals[REFRESH], 0);
+    
+    return 0;
 }
 
 const gchar *

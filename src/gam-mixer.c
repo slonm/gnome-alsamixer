@@ -31,6 +31,7 @@
 #include "gam-slider-pan.h"
 #include "gam-slider-dual.h"
 #include "gam-toggle.h"
+#include "gam-enum.h"
 #include "gam-props-dlg.h"
 
 enum {
@@ -398,7 +399,7 @@ static void
 gam_mixer_construct_elements (GamMixer *gam_mixer)
 {
     GamMixerPrivate *priv;
-    GtkWidget *slider, *toggle, *vbox;
+    GtkWidget *toggle, *vbox = NULL;
     snd_mixer_elem_t *elem;
     gint i = 0;
 
@@ -408,7 +409,7 @@ gam_mixer_construct_elements (GamMixer *gam_mixer)
 
     for (elem = snd_mixer_first_elem (priv->handle); elem; elem = snd_mixer_elem_next (elem)) {
         if (snd_mixer_selem_is_active (elem)) {
-            /* if element is a switch */
+            /* if element is a switch or enum */
             if (!(snd_mixer_selem_has_playback_volume (elem) || snd_mixer_selem_has_capture_volume (elem))) {
                 if (i % 5 == 0) {
                     vbox = gtk_vbox_new (FALSE, 0);
@@ -417,11 +418,23 @@ gam_mixer_construct_elements (GamMixer *gam_mixer)
                     gtk_widget_show (vbox);
                 }
 
-                toggle = gam_toggle_new (elem, gam_mixer, GAM_APP (priv->app));
-                gtk_box_pack_start (GTK_BOX (vbox),
-                                    toggle, FALSE, FALSE, 0);
-                if (gam_toggle_get_visible (GAM_TOGGLE (toggle)))
-                    gtk_widget_show (toggle);
+                if (snd_mixer_selem_is_enumerated(elem))
+                {  
+                  toggle = gam_enum_new (elem, gam_mixer, GAM_APP (priv->app));
+                  gtk_box_pack_start (GTK_BOX (vbox),
+                                      toggle, FALSE, FALSE, 0);
+                  if (gam_enum_get_visible (GAM_ENUM (toggle)))
+                      gtk_widget_show (toggle);
+                }  
+                else
+                {    
+                  toggle = gam_toggle_new (elem, gam_mixer, GAM_APP (priv->app));
+                  gtk_box_pack_start (GTK_BOX (vbox),
+                                      toggle, FALSE, FALSE, 0);
+                  if (gam_toggle_get_visible (GAM_TOGGLE (toggle)))
+                      gtk_widget_show (toggle);
+                }
+                
                 priv->toggles = g_slist_append (priv->toggles, toggle);
 
                 i++;
@@ -656,7 +669,7 @@ gam_mixer_get_nth_slider (GamMixer *gam_mixer, gint index)
     return GAM_SLIDER (g_slist_nth_data (priv->sliders, index));
 }
 
-GamToggle *
+gpointer
 gam_mixer_get_nth_toggle (GamMixer *gam_mixer, gint index)
 {
     GamMixerPrivate *priv;
@@ -667,7 +680,7 @@ gam_mixer_get_nth_toggle (GamMixer *gam_mixer, gint index)
 
     g_return_val_if_fail (priv->toggles != NULL, NULL);
 
-    return GAM_TOGGLE (g_slist_nth_data (priv->toggles, index));
+    return g_slist_nth_data (priv->toggles, index);
 }
 
 void

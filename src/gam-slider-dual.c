@@ -158,7 +158,6 @@ gam_slider_dual_constructor (GType                  type,
     GamSliderDual *gam_slider_dual;
     GamSliderDualPrivate *priv;
     GtkWidget *hbox;
-    gint value;
 
     object = (* G_OBJECT_CLASS (parent_class)->constructor) (type,
                                                              n_construct_properties,
@@ -378,7 +377,6 @@ gam_slider_dual_refresh (GamSlider *gam_slider)
 {
     GamSliderDual * const gam_slider_dual = GAM_SLIDER_DUAL (snd_mixer_elem_get_callback_private (gam_slider_get_elem (gam_slider)));
     GamSliderDualPrivate *priv;
-    gint value;
 
     priv = GAM_SLIDER_DUAL_GET_PRIVATE (gam_slider_dual);
 

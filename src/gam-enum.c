@@ -1,7 +1,7 @@
 /*
  *  (gnome-alsamixer) An ALSA mixer for GNOME
  *
- *  Copyright (C) 2001-2005 Derrick J Houy <djhouy@paw.za.org>.
+ *  Copyright (C) 2012 Mihail Slobodyanuk <slobodyanukma@gmail.com>.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,7 +24,12 @@
 
 #include <glib/gi18n.h>
 
-#include "gam-toggle.h"
+#include <gtk/gtklabel.h>
+#include <gtk/gtkcombobox.h>
+#include <gtk/gtkliststore.h>
+#include <gtk/gtkcellrenderertext.h>
+#include <gtk/gtkcelllayout.h>
+#include "gam-enum.h"
 
 enum {
     PROP_0,
@@ -33,78 +38,81 @@ enum {
     PROP_APP
 };
 
-#define GAM_TOGGLE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GAM_TYPE_TOGGLE, GamTogglePrivate))
+#define GAM_ENUM_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GAM_TYPE_ENUM, GamEnumPrivate))
 
-typedef struct _GamTogglePrivate GamTogglePrivate;
+typedef struct _GamEnumPrivate GamEnumPrivate;
 
-struct _GamTogglePrivate
+struct _GamEnumPrivate
 {
     snd_mixer_elem_t *elem;
     gpointer          app;
     gpointer          mixer;
     gchar            *name_config;
+    GtkWidget      *combo;
+    GtkWidget         *label;
+    int enum_channel_bits;
 };
 
-static void     gam_toggle_class_init   (GamToggleClass        *klass);
-static void     gam_toggle_init         (GamToggle             *gam_toggle);
-static void     gam_toggle_finalize     (GObject               *object);
-static GObject *gam_toggle_constructor  (GType                  type,
+static void     gam_enum_class_init   (GamEnumClass        *klass);
+static void     gam_enum_init         (GamEnum             *gam_enum);
+static void     gam_enum_finalize     (GObject               *object);
+static GObject *gam_enum_constructor  (GType                  type,
                                          guint                  n_construct_properties,
                                          GObjectConstructParam *construct_params);
-static void     gam_toggle_set_property (GObject               *object,
+static void     gam_enum_set_property (GObject               *object,
                                          guint                  prop_id,
                                          const GValue          *value,
                                          GParamSpec            *pspec);
-static void     gam_toggle_get_property (GObject               *object,
+static void     gam_enum_get_property (GObject               *object,
                                          guint                  prop_id,
                                          GValue                *value,
                                          GParamSpec            *pspec);
-static void     gam_toggle_set_elem     (GamToggle             *gam_slider,
+static void     gam_enum_set_elem     (GamEnum             *gam_slider,
                                          snd_mixer_elem_t      *elem);
-static gint     gam_toggle_toggled_cb   (GtkWidget             *widget,
-                                         GamToggle             *gam_toggle);
-static gint     gam_toggle_refresh      (snd_mixer_elem_t      *elem,
+static gint     gam_enum_changed_cb   (GtkWidget             *widget,
+                                         GamEnum             *gam_enum);
+static gint     gam_enum_refresh      (snd_mixer_elem_t      *elem,
                                          guint                  mask);
 
 static gpointer parent_class;
 
 GType
-gam_toggle_get_type (void)
+gam_enum_get_type (void)
 {
-    static GType gam_toggle_type = 0;
+    static GType gam_enum_type = 0;
 
-    if (!gam_toggle_type) {
-        static const GTypeInfo gam_toggle_info =
+    if (!gam_enum_type) {
+        static const GTypeInfo gam_enum_info =
         {
-            sizeof (GamToggleClass),
+            sizeof (GamEnumClass),
             NULL,               /* base_init */
             NULL,               /* base_finalize */
-            (GClassInitFunc) gam_toggle_class_init,
+            (GClassInitFunc) gam_enum_class_init,
             NULL,               /* class_finalize */
             NULL,               /* class_data */
-            sizeof (GamToggle),
+            sizeof (GamEnum),
             0,                  /* n_preallocs */
-            (GInstanceInitFunc) gam_toggle_init,
+            (GInstanceInitFunc) gam_enum_init,
         };
 
-        gam_toggle_type = g_type_register_static (GTK_TYPE_CHECK_BUTTON, "GamToggle",
-                                                  &gam_toggle_info, 0);
+        gam_enum_type = g_type_register_static (GTK_TYPE_HBOX, "GamEnum",
+                                                  &gam_enum_info, 0);
     }
 
-    return gam_toggle_type;
+    return gam_enum_type;
 }
 
 static void
-gam_toggle_class_init (GamToggleClass *klass)
+gam_enum_class_init (GamEnumClass *klass)
 {
     GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
     parent_class = g_type_class_peek_parent (klass);
 
-    gobject_class->finalize = gam_toggle_finalize;
-    gobject_class->constructor = gam_toggle_constructor;
-    gobject_class->set_property = gam_toggle_set_property;
-    gobject_class->get_property = gam_toggle_get_property;
+    gobject_class->finalize = gam_enum_finalize;
+    gobject_class->constructor = gam_enum_constructor;
+    gobject_class->set_property = gam_enum_set_property;
+    gobject_class->get_property = gam_enum_get_property;
 
     g_object_class_install_property (gobject_class,
                                      PROP_ELEM,
@@ -127,35 +135,37 @@ gam_toggle_class_init (GamToggleClass *klass)
                                                            _("Main Application"),
                                                            G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
-    g_type_class_add_private (gobject_class, sizeof (GamTogglePrivate));
+    g_type_class_add_private (gobject_class, sizeof (GamEnumPrivate));
 }
 
 static void
-gam_toggle_init (GamToggle *gam_toggle)
+gam_enum_init (GamEnum *gam_enum)
 {
-    GamTogglePrivate *priv;
+    GamEnumPrivate *priv;
 
-    g_return_if_fail (GAM_IS_TOGGLE (gam_toggle));
+    g_return_if_fail (GAM_IS_ENUM (gam_enum));
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     priv->elem = NULL;
     priv->name_config = NULL;
     priv->app = NULL;
     priv->mixer = NULL;
+    priv->combo = NULL;
+    priv->label = NULL;
 }
 
 static void
-gam_toggle_finalize (GObject *object)
+gam_enum_finalize (GObject *object)
 {
-    GamToggle *gam_toggle;
-    GamTogglePrivate *priv;
+    GamEnum *gam_enum;
+    GamEnumPrivate *priv;
 
-    g_return_if_fail (GAM_IS_TOGGLE (object));
+    g_return_if_fail (GAM_IS_ENUM (object));
 
-    gam_toggle = GAM_TOGGLE (object);
+    gam_enum = GAM_ENUM (object);
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     snd_mixer_elem_set_callback (priv->elem, NULL);
 
@@ -165,59 +175,99 @@ gam_toggle_finalize (GObject *object)
     priv->elem = NULL;
     priv->mixer = NULL;
     priv->app = NULL;
+    priv->combo = NULL;
+    priv->label = NULL;
 
     G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static GObject*
-gam_toggle_constructor (GType                  type,
+gam_enum_constructor (GType                  type,
                         guint                  n_construct_properties,
                         GObjectConstructParam *construct_params)
 {
     GObject *object;
-    GamToggle *gam_toggle;
-
+    GamEnum *gam_enum;
+    GamEnumPrivate *priv;
+    int i, enum_index, enum_count;
+    GtkTreeIter iter;
+    char item_name[20];
+    GtkListStore     *store;
+    GtkCellRenderer *cell;
+    
     object = (* G_OBJECT_CLASS (parent_class)->constructor) (type,
                                                              n_construct_properties,
                                                              construct_params);
 
-    gam_toggle = GAM_TOGGLE (object);
+    gam_enum = GAM_ENUM (object);
 
-    gtk_button_set_label (GTK_BUTTON (gam_toggle), gam_toggle_get_display_name (gam_toggle));
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
+    
+    priv->enum_channel_bits = 0;
+    for (i = 0; i <= SND_MIXER_SCHN_LAST; ++i)
+            if (snd_mixer_selem_get_enum_item(priv->elem, (snd_mixer_selem_channel_id_t)i, &enum_index) >= 0)
+                    priv->enum_channel_bits |= 1 << i;
+    
+    store = gtk_list_store_new(1, G_TYPE_STRING);
+    
+    enum_count=snd_mixer_selem_get_enum_items(priv->elem);
+    for (i = 0; i < enum_count; i++)
+      {
+        snd_mixer_selem_get_enum_item_name(priv->elem, i, 20, item_name);
 
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (gam_toggle),
-                                  gam_toggle_get_state (gam_toggle));
+        gtk_list_store_append (store, &iter);
+        gtk_list_store_set (store, &iter,
+                            0, item_name,
+                            -1);
+      }
+    priv->combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL (store));        
+    if(enum_count)
+      gtk_combo_box_set_active (GTK_COMBO_BOX(priv->combo), gam_enum_get_state (gam_enum));
+    /* Create cell renderer. */
+    cell = gtk_cell_renderer_text_new();
+    /* Pack it to the combo box. */
+    gtk_cell_layout_pack_start( GTK_CELL_LAYOUT( priv->combo ), cell, TRUE );
+    /* Connect renderer to data source */
+    gtk_cell_layout_set_attributes( GTK_CELL_LAYOUT( priv->combo ), cell, "text", 0, NULL );
 
-    g_signal_connect (G_OBJECT (gam_toggle), "toggled",
-                      G_CALLBACK (gam_toggle_toggled_cb), gam_toggle);
+    gtk_widget_show (priv->combo);
+    gtk_box_pack_start (GTK_BOX (gam_enum), priv->combo, FALSE, FALSE, 0);
+
+    priv->label = gtk_label_new_with_mnemonic (gam_enum_get_display_name (gam_enum));
+    g_object_set(priv->label,"xpad", 5, NULL);
+    gtk_widget_show (priv->label);
+    gtk_box_pack_start (GTK_BOX (gam_enum), priv->label, FALSE, FALSE, 0);
+    
+    g_signal_connect (GTK_COMBO_BOX(priv->combo), "changed",
+                      G_CALLBACK (gam_enum_changed_cb), gam_enum);
 
     return object;
 }
 
 static void
-gam_toggle_set_property (GObject      *object,
+gam_enum_set_property (GObject      *object,
                          guint         prop_id,
                          const GValue *value,
                          GParamSpec   *pspec)
 {
-    GamToggle *gam_toggle;
-    GamTogglePrivate *priv;
+    GamEnum *gam_enum;
+    GamEnumPrivate *priv;
 
-    gam_toggle = GAM_TOGGLE (object);
+    gam_enum = GAM_ENUM (object);
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     switch (prop_id) {
         case PROP_ELEM:
-            gam_toggle_set_elem (gam_toggle, g_value_get_pointer (value));
+            gam_enum_set_elem (gam_enum, g_value_get_pointer (value));
             break;
         case PROP_MIXER:
             priv->mixer = g_value_get_pointer (value);
-            g_object_notify (G_OBJECT (gam_toggle), "mixer");
+            g_object_notify (G_OBJECT (gam_enum), "mixer");
             break;
         case PROP_APP:
             priv->app = g_value_get_pointer (value);
-            g_object_notify (G_OBJECT (gam_toggle), "app");
+            g_object_notify (G_OBJECT (gam_enum), "app");
             break;
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -226,17 +276,17 @@ gam_toggle_set_property (GObject      *object,
 }
 
 static void
-gam_toggle_get_property (GObject    *object,
+gam_enum_get_property (GObject    *object,
                          guint       prop_id,
                          GValue     *value,
                          GParamSpec *pspec)
 {
-    GamToggle *gam_toggle;
-    GamTogglePrivate *priv;
+    GamEnum *gam_enum;
+    GamEnumPrivate *priv;
 
-    gam_toggle = GAM_TOGGLE (object);
+    gam_enum = GAM_ENUM (object);
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     switch (prop_id) {
         case PROP_ELEM:
@@ -255,141 +305,139 @@ gam_toggle_get_property (GObject    *object,
 }
 
 static gint
-gam_toggle_toggled_cb (GtkWidget *widget, GamToggle *gam_toggle)
+gam_enum_changed_cb (GtkWidget *widget, GamEnum *gam_enum)
 {
-    gam_toggle_set_state (gam_toggle, 
-        gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)));
+    gam_enum_set_state (gam_enum, 
+        gtk_combo_box_get_active (GTK_COMBO_BOX (widget)));
 
     return TRUE;
 }
 
 static gint
-gam_toggle_refresh (snd_mixer_elem_t *elem, guint mask)
+gam_enum_refresh (snd_mixer_elem_t *elem, guint mask)
 {
-    GamToggle * const gam_toggle = GAM_TOGGLE (snd_mixer_elem_get_callback_private (elem));
+    GamEnum * const gam_enum = GAM_ENUM (snd_mixer_elem_get_callback_private (elem));
+    int enum_count;
 
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (gam_toggle),
-                                  gam_toggle_get_state (gam_toggle));
+    GamEnumPrivate *priv;
+
+    g_return_val_if_fail (GAM_IS_ENUM (gam_enum), NULL);
+
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
+    
+    enum_count=snd_mixer_selem_get_enum_items(priv->elem);
+    
+    if(enum_count)
+      gtk_combo_box_set_active (GTK_COMBO_BOX(priv->combo), gam_enum_get_state (gam_enum));
 
     return 0;
 }
 
 GtkWidget *
-gam_toggle_new (gpointer elem, GamMixer *gam_mixer, GamApp *gam_app)
+gam_enum_new (gpointer elem, GamMixer *gam_mixer, GamApp *gam_app)
 {
     g_return_val_if_fail (GAM_IS_MIXER (gam_mixer), NULL);
 
-    return g_object_new (GAM_TYPE_TOGGLE,
+    return g_object_new (GAM_TYPE_ENUM,
                          "elem", elem,
                          "mixer", gam_mixer,
                          "app", gam_app,
-                         "use_underline", TRUE,
                          NULL);
 }
 
 snd_mixer_elem_t *
-gam_toggle_get_elem (GamToggle *gam_toggle)
+gam_enum_get_elem (GamEnum *gam_enum)
 {
-    GamTogglePrivate *priv;
+    GamEnumPrivate *priv;
 
-    g_return_val_if_fail (GAM_IS_TOGGLE (gam_toggle), NULL);
+    g_return_val_if_fail (GAM_IS_ENUM (gam_enum), NULL);
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     return priv->elem;
 }
 
 void
-gam_toggle_set_elem (GamToggle *gam_toggle, snd_mixer_elem_t *elem)
+gam_enum_set_elem (GamEnum *gam_enum, snd_mixer_elem_t *elem)
 {
-    GamTogglePrivate *priv;
+    GamEnumPrivate *priv;
 
-    g_return_if_fail (GAM_IS_TOGGLE (gam_toggle));
+    g_return_if_fail (GAM_IS_ENUM (gam_enum));
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     if (priv->elem)
         snd_mixer_elem_set_callback (priv->elem, NULL);
 
     if (elem) {
-        snd_mixer_elem_set_callback_private (elem, gam_toggle);
-        snd_mixer_elem_set_callback (elem, gam_toggle_refresh);
+        snd_mixer_elem_set_callback_private (elem, gam_enum);
+        snd_mixer_elem_set_callback (elem, gam_enum_refresh);
     }
 
     priv->elem = elem;
 
-    g_object_notify (G_OBJECT (gam_toggle), "elem");
+    g_object_notify (G_OBJECT (gam_enum), "elem");
 }
 
-gboolean
-gam_toggle_get_state (GamToggle *gam_toggle)
+gint
+gam_enum_get_state (GamEnum *gam_enum)
 {
-    GamTogglePrivate *priv;
+    GamEnumPrivate *priv;
     gint value = 0;
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
-
-    if (snd_mixer_selem_has_playback_switch (priv->elem)) {
-        snd_mixer_selem_get_playback_switch (priv->elem, 0, &value);
-    } else if (snd_mixer_selem_has_capture_switch (priv->elem)) {
-        snd_mixer_selem_get_capture_switch (priv->elem, 0, &value);
-    } else {
-        g_warning ("%s (). No idea what to do for mixer element \"%s\"!",
-                   __FUNCTION__, gam_mixer_create_elem_name(priv->elem));
-    }
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
+    
+    snd_mixer_selem_get_enum_item(priv->elem, ffs(priv->enum_channel_bits) - 1, &value);
 
     return value;
 }
 
 void
-gam_toggle_set_state (GamToggle *gam_toggle, gboolean state)
+gam_enum_set_state (GamEnum *gam_enum, gint state)
 {
-    GamTogglePrivate *priv;
-    const gboolean internal_state = gam_toggle_get_state (gam_toggle);
-    int err;
+    GamEnumPrivate *priv;
+    const gint internal_state = gam_enum_get_state (gam_enum);
+    int index, i, err;
+    int items;
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
+    
+    items = snd_mixer_selem_get_enum_items(priv->elem);
+    if (items < 1) return;
+    
+    err = snd_mixer_selem_get_enum_item(priv->elem, ffs(priv->enum_channel_bits) - 1, &index);
+    if (err < 0) return;
 
     if (state == internal_state) return;
 
-    if (snd_mixer_selem_has_playback_switch (priv->elem)) {
-        err = snd_mixer_selem_set_playback_switch_all (priv->elem, state);
-    } else if (snd_mixer_selem_has_capture_switch (priv->elem)) {
-        err = snd_mixer_selem_set_capture_switch_all (priv->elem, state);
-    } else {
-        g_warning ("%s (). No idea what to do for mixer element \"%s\"!",
-                   __FUNCTION__, gam_mixer_create_elem_name(priv->elem));
-        err = 0;
-    }
-
-    if (err)
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (gam_toggle),
-                                      internal_state);
+    for (i = 0; i <= SND_MIXER_SCHN_LAST; ++i)
+      if (priv->enum_channel_bits & (1 << i))
+        snd_mixer_selem_set_enum_item(priv->elem, i, state);
 }
 
 const gchar *
-gam_toggle_get_name (GamToggle *gam_toggle)
+gam_enum_get_name (GamEnum *gam_enum)
 {
-    GamTogglePrivate *priv;
+    GamEnumPrivate *priv;
 
-    g_return_val_if_fail (GAM_IS_TOGGLE (gam_toggle), NULL);
+    g_return_val_if_fail (GAM_IS_ENUM (gam_enum), NULL);
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     return gam_mixer_create_elem_name(priv->elem);
 }
 
 const gchar *
-gam_toggle_get_config_name (GamToggle *gam_toggle)
+gam_enum_get_config_name (GamEnum *gam_enum)
 {
-    GamTogglePrivate *priv;
+    GamEnumPrivate *priv;
 
-    g_return_val_if_fail (GAM_IS_TOGGLE (gam_toggle), NULL);
+    g_return_val_if_fail (GAM_IS_ENUM (gam_enum), NULL);
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     if (priv->name_config == NULL) {
-        priv->name_config = g_strdup (gam_toggle_get_name (gam_toggle));
+        priv->name_config = g_strdup (gam_enum_get_name (gam_enum));
         priv->name_config = g_strdelimit (priv->name_config, GAM_CONFIG_DELIMITERS, '_');
     }
 
@@ -397,19 +445,19 @@ gam_toggle_get_config_name (GamToggle *gam_toggle)
 }
 
 gchar *
-gam_toggle_get_display_name (GamToggle *gam_toggle)
+gam_enum_get_display_name (GamEnum *gam_enum)
 {
-    GamTogglePrivate *priv;
+    GamEnumPrivate *priv;
     gchar *key, *name = NULL;
     GConfEntry* entry;
 
-    g_return_val_if_fail (GAM_IS_TOGGLE (gam_toggle), NULL);
+    g_return_val_if_fail (GAM_IS_ENUM (gam_enum), NULL);
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     key = g_strdup_printf ("/apps/gnome-alsamixer/toggle_display_names/%s-%s",
                            gam_mixer_get_config_name (GAM_MIXER (priv->mixer)),
-                           gam_toggle_get_config_name (gam_toggle));
+                           gam_enum_get_config_name (gam_enum));
 
     entry=gconf_client_get_entry(gam_app_get_gconf_client (GAM_APP (priv->app)),
                                          key,
@@ -425,22 +473,22 @@ gam_toggle_get_display_name (GamToggle *gam_toggle)
 
     g_free (key);
 
-    return name == NULL ? g_strdup (gam_toggle_get_name (gam_toggle)) : name;
+    return name == NULL ? g_strdup (gam_enum_get_name (gam_enum)) : name;
 }
 
 void
-gam_toggle_set_display_name (GamToggle *gam_toggle, const gchar *name)
+gam_enum_set_display_name (GamEnum *gam_enum, const gchar *name)
 {
-    GamTogglePrivate *priv;
+    GamEnumPrivate *priv;
     gchar *key;
 
-    g_return_if_fail (GAM_IS_TOGGLE (gam_toggle));
+    g_return_if_fail (GAM_IS_ENUM (gam_enum));
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     key = g_strdup_printf ("/apps/gnome-alsamixer/toggle_display_names/%s-%s",
                            gam_mixer_get_config_name (GAM_MIXER (priv->mixer)),
-                           gam_toggle_get_config_name (gam_toggle));
+                           gam_enum_get_config_name (gam_enum));
 
     gconf_client_set_string (gam_app_get_gconf_client (GAM_APP (priv->app)),
                              key,
@@ -449,24 +497,24 @@ gam_toggle_set_display_name (GamToggle *gam_toggle, const gchar *name)
 
     gconf_client_suggest_sync (gam_app_get_gconf_client (GAM_APP (priv->app)), NULL);
 
-    gtk_button_set_label (GTK_BUTTON (gam_toggle), name);
+    gtk_label_set_label(GTK_LABEL (priv->label), name);
 }
 
 gboolean
-gam_toggle_get_visible (GamToggle *gam_toggle)
+gam_enum_get_visible (GamEnum *gam_enum)
 {
-    GamTogglePrivate *priv;
+    GamEnumPrivate *priv;
     gchar *key;
     gboolean visible = TRUE;
     GConfEntry* entry;
 
-    g_return_if_fail (GAM_IS_TOGGLE (gam_toggle));
+    g_return_if_fail (GAM_IS_ENUM (gam_enum));
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     key = g_strdup_printf ("/apps/gnome-alsamixer/display_toggles/%s-%s",
                            gam_mixer_get_config_name (GAM_MIXER (priv->mixer)),
-                           gam_toggle_get_config_name (gam_toggle));
+                           gam_enum_get_config_name (gam_enum));
 
     entry=gconf_client_get_entry(gam_app_get_gconf_client (GAM_APP (priv->app)),
                                          key,
@@ -486,18 +534,18 @@ gam_toggle_get_visible (GamToggle *gam_toggle)
 }
 
 void
-gam_toggle_set_visible (GamToggle *gam_toggle, gboolean visible)
+gam_enum_set_visible (GamEnum *gam_enum, gboolean visible)
 {
-    GamTogglePrivate *priv;
+    GamEnumPrivate *priv;
     gchar *key;
 
-    g_return_if_fail (GAM_IS_TOGGLE (gam_toggle));
+    g_return_if_fail (GAM_IS_ENUM (gam_enum));
 
-    priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
+    priv = GAM_ENUM_GET_PRIVATE (gam_enum);
 
     key = g_strdup_printf ("/apps/gnome-alsamixer/display_toggles/%s-%s",
                            gam_mixer_get_config_name (GAM_MIXER (priv->mixer)),
-                           gam_toggle_get_config_name (gam_toggle));
+                           gam_enum_get_config_name (gam_enum));
 
     gconf_client_set_bool (gam_app_get_gconf_client (GAM_APP (priv->app)),
                            key,
@@ -507,7 +555,8 @@ gam_toggle_set_visible (GamToggle *gam_toggle, gboolean visible)
     gconf_client_suggest_sync (gam_app_get_gconf_client (GAM_APP (priv->app)), NULL);
 
     if (visible)
-        gtk_widget_show (GTK_WIDGET (gam_toggle));
+        gtk_widget_show (GTK_WIDGET (gam_enum));
     else
-        gtk_widget_hide (GTK_WIDGET (gam_toggle));
+        gtk_widget_hide (GTK_WIDGET (gam_enum));
 }
+

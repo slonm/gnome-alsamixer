@@ -168,13 +168,15 @@ gam_props_dlg_constructor (GType                  type,
     GObject *object;
     GamPropsDlg *gam_props_dlg;
     GamPropsDlgPrivate *priv;
-    GtkWidget *vbox1, *vbox2, *vbox3, *hbox, *entry, *toggle, *label, *separator, *scrolled_window;
+    GtkWidget *vbox1, *vbox2, *vbox3, *hbox, *entry, *toggle, *label, *scrolled_window;
     GtkObject *hadjustment, *vadjustment;
     GtkSizeGroup *size_group;
     GamSlider *gam_slider;
     GamToggle *gam_toggle;
+    GamEnum *gam_enum;
     gchar *slider_name, *toggle_name, *label_text;
     gint i;
+    gboolean toggle_visible;
 
     object = (* G_OBJECT_CLASS (parent_class)->constructor) (type,
                                                              n_construct_properties,
@@ -272,9 +274,23 @@ gam_props_dlg_constructor (GType                  type,
         hbox = gtk_hbox_new (FALSE, 0);
         gtk_container_set_border_width (GTK_CONTAINER (hbox), 0);
 
-        gam_toggle = gam_mixer_get_nth_toggle (GAM_MIXER (priv->mixer), i);
-        toggle = gtk_check_button_new_with_label (gam_toggle_get_name (gam_toggle));
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), gam_toggle_get_visible (gam_toggle));
+        if(GAM_IS_ENUM(gam_mixer_get_nth_toggle (GAM_MIXER (priv->mixer), i)))
+        {
+            gam_enum = GAM_ENUM(gam_mixer_get_nth_toggle (GAM_MIXER (priv->mixer), i));
+            toggle_name = gam_enum_get_display_name (gam_enum);
+            toggle = gtk_check_button_new_with_label (gam_enum_get_name (gam_enum));
+            toggle_visible = gam_enum_get_visible (gam_enum);
+        }    
+        else
+        {    
+            gam_toggle = GAM_TOGGLE(gam_mixer_get_nth_toggle (GAM_MIXER (priv->mixer), i));
+            toggle_name = gam_toggle_get_display_name (gam_toggle);
+            toggle = gtk_check_button_new_with_label (gam_toggle_get_name (gam_toggle));
+            toggle_visible = gam_toggle_get_visible (gam_toggle);
+        }
+        
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle), toggle_visible);
+        
         gtk_size_group_add_widget (size_group, toggle);
 
         priv->toggle_toggles = g_slist_append (priv->toggle_toggles, toggle);
@@ -283,7 +299,6 @@ gam_props_dlg_constructor (GType                  type,
 
         priv->toggle_entries = g_slist_append (priv->toggle_entries, entry);
 
-        toggle_name = gam_toggle_get_display_name (gam_toggle);
         gtk_entry_set_text (GTK_ENTRY (entry), toggle_name);
 
         g_free (toggle_name);
@@ -354,6 +369,7 @@ gam_props_dlg_response_handler (GtkDialog *dialog, gint res_id, GamPropsDlg *gam
     GamMixer *gam_mixer;
     GamSlider *gam_slider;
     GamToggle *gam_toggle;
+    GamEnum *gam_enum;
     GtkEntry *entry;
     GtkToggleButton *toggle;
     gint i;
@@ -375,13 +391,22 @@ gam_props_dlg_response_handler (GtkDialog *dialog, gint res_id, GamPropsDlg *gam
             }
 
             for (i = 0; i < g_slist_length (priv->toggle_toggles); i++) {
-                gam_toggle = gam_mixer_get_nth_toggle (gam_mixer, i);
 
                 entry = GTK_ENTRY (g_slist_nth_data (priv->toggle_entries, i));
                 toggle = GTK_TOGGLE_BUTTON (g_slist_nth_data (priv->toggle_toggles, i));
 
-                gam_toggle_set_display_name (gam_toggle, gtk_entry_get_text (entry));
-                gam_toggle_set_visible (gam_toggle, gtk_toggle_button_get_active (toggle));
+               if(GAM_IS_ENUM(gam_mixer_get_nth_toggle (GAM_MIXER (priv->mixer), i)))
+                {
+                    gam_enum = gam_mixer_get_nth_toggle (gam_mixer, i);
+                    gam_enum_set_display_name (gam_enum, gtk_entry_get_text (entry));
+                    gam_enum_set_visible (gam_enum, gtk_toggle_button_get_active (toggle));
+                }
+                else
+                {
+                    gam_toggle = gam_mixer_get_nth_toggle (gam_mixer, i);
+                    gam_toggle_set_display_name (gam_toggle, gtk_entry_get_text (entry));
+                    gam_toggle_set_visible (gam_toggle, gtk_toggle_button_get_active (toggle));
+                }
             }
 
             gtk_widget_destroy (GTK_WIDGET (dialog));

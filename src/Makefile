@@ -53,7 +53,7 @@ am_gnome_alsamixer_OBJECTS = gam-main.$(OBJEXT) gam-app.$(OBJEXT) \
 	gam-mixer.$(OBJEXT) gam-slider.$(OBJEXT) \
 	gam-slider-pan.$(OBJEXT) gam-slider-dual.$(OBJEXT) \
 	gam-toggle.$(OBJEXT) gam-prefs-dlg.$(OBJEXT) \
-	gam-props-dlg.$(OBJEXT)
+	gam-props-dlg.$(OBJEXT) gam-enum.$(OBJEXT)
 gnome_alsamixer_OBJECTS = $(am_gnome_alsamixer_OBJECTS)
 gnome_alsamixer_DEPENDENCIES =
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -202,6 +202,7 @@ gnome_alsamixer_SOURCES = \
 	gam-slider-pan.c gam-slider-pan.h \
 	gam-slider-dual.c gam-slider-dual.h \
 	gam-toggle.c gam-toggle.h \
+	gam-enum.c gam-enum.h \
 	gam-prefs-dlg.c gam-prefs-dlg.h \
 	gam-props-dlg.c gam-props-dlg.h
 
@@ -281,6 +282,7 @@ distclean-compile:
 #include ./$(DEPDIR)/gam-slider-pan.Po
 #include ./$(DEPDIR)/gam-slider.Po
 #include ./$(DEPDIR)/gam-toggle.Po
+#include ./$(DEPDIR)/gam-enum.Po
 
 .c.o:
 #	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

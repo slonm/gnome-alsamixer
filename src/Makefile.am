@@ -20,6 +20,7 @@ gnome_alsamixer_SOURCES = \
 	gam-slider-pan.c gam-slider-pan.h \
 	gam-slider-dual.c gam-slider-dual.h \
 	gam-toggle.c gam-toggle.h \
+	gam-enum.c gam-enum.h \
 	gam-prefs-dlg.c gam-prefs-dlg.h \
 	gam-props-dlg.c gam-props-dlg.h
 

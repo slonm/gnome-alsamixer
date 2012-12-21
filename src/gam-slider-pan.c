@@ -145,7 +145,6 @@ gam_slider_pan_constructor (GType                  type,
     GObject *object;
     GamSliderPan *gam_slider_pan;
     GamSliderPanPrivate *priv;
-    gint value;
 
     object = (* G_OBJECT_CLASS (parent_class)->constructor) (type,
                                                              n_construct_properties,
@@ -314,7 +313,6 @@ gam_slider_pan_refresh (GamSlider *gam_slider)
 {
     GamSliderPan * const gam_slider_pan = GAM_SLIDER_PAN (snd_mixer_elem_get_callback_private (gam_slider_get_elem (gam_slider)));
     GamSliderPanPrivate *priv;
-    gint value;
 
     priv = GAM_SLIDER_PAN_GET_PRIVATE (gam_slider_pan);
 

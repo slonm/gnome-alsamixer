@@ -170,7 +170,7 @@ static GObject *gam_prefs_dlg_constructor (GType                  type,
     GamPrefsDlgPrivate *priv;
     GamApp *gam_app;
     GamMixer *mixer;
-    GtkWidget *hbox, *entry, *toggle, *label, *separator, *vbox1, *vbox2, *vbox3;
+    GtkWidget *hbox, *entry, *toggle, *label, *vbox1, *vbox2, *vbox3;
     GtkSizeGroup *size_group;
     gchar *mixer_name, *label_text;
     gint i;

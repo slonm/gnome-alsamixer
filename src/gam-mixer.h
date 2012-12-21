@@ -53,6 +53,7 @@ struct _GamMixerClass
 #include "gam-app.h"
 #include "gam-slider.h"
 #include "gam-toggle.h"
+#include "gam-enum.h"
 
 GType                 gam_mixer_get_type          (void) G_GNUC_CONST;
 GtkWidget            *gam_mixer_new               (GamApp      *gam_app,
@@ -70,7 +71,7 @@ gint                  gam_mixer_slider_count      (GamMixer    *gam_mixer);
 gint                  gam_mixer_toggle_count      (GamMixer    *gam_mixer);
 GamSlider            *gam_mixer_get_nth_slider    (GamMixer    *gam_mixer,
                                                    gint         index);
-GamToggle            *gam_mixer_get_nth_toggle    (GamMixer    *gam_mixer,
+gpointer            gam_mixer_get_nth_toggle    (GamMixer    *gam_mixer,
                                                    gint         index);
 void                  gam_mixer_construct_sliders (GamMixer    *gam_mixer);
 
