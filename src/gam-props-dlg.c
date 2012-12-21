@@ -26,6 +26,8 @@
 
 #include "gam-props-dlg.h"
 #include "gam-slider.h"
+#include <gtk/gtkbutton.h>
+#include <glib-2.0/glib/gtypes.h>
 
 enum {
     PROP_0,
@@ -189,6 +191,10 @@ gam_props_dlg_constructor (GType                  type,
     gtk_dialog_set_has_separator (GTK_DIALOG (gam_props_dlg), FALSE);
 
     gtk_dialog_add_button (GTK_DIALOG (gam_props_dlg),
+                           GTK_STOCK_REVERT_TO_SAVED,
+                           GTK_RESPONSE_APPLY);
+
+    gtk_dialog_add_button (GTK_DIALOG (gam_props_dlg),
                            GTK_STOCK_CLOSE,
                            GTK_RESPONSE_CLOSE);
 
@@ -260,7 +266,7 @@ gam_props_dlg_constructor (GType                  type,
 
         slider_name = gam_slider_get_display_name (gam_slider);
         gtk_entry_set_text (GTK_ENTRY (entry), slider_name);
-        gtk_entry_set_max_length (GTK_ENTRY (entry), 8);
+        /*gtk_entry_set_max_length (GTK_ENTRY (entry), 8);*/
 
         g_free (slider_name);
 
@@ -376,8 +382,25 @@ gam_props_dlg_response_handler (GtkDialog *dialog, gint res_id, GamPropsDlg *gam
 
     priv = GAM_PROPS_DLG_GET_PRIVATE (gam_props_dlg);
 
-    switch (res_id) {
-        default:
+    if(res_id==GTK_RESPONSE_APPLY) {
+            gam_mixer = GAM_MIXER (priv->mixer);
+
+            for (i = 0; i < g_slist_length (priv->slider_toggles); i++) {
+
+                entry = GTK_ENTRY (g_slist_nth_data (priv->slider_entries, i));
+                toggle = GTK_TOGGLE_BUTTON (g_slist_nth_data (priv->slider_toggles, i));
+                gtk_entry_set_text (entry, gtk_button_get_label (GTK_BUTTON(toggle)));
+                gtk_toggle_button_set_active (toggle, TRUE);
+            }
+
+            for (i = 0; i < g_slist_length (priv->toggle_toggles); i++) {
+                entry = GTK_ENTRY (g_slist_nth_data (priv->toggle_entries, i));
+                toggle = GTK_TOGGLE_BUTTON (g_slist_nth_data (priv->toggle_toggles, i));
+
+                gtk_entry_set_text (entry, gtk_button_get_label (GTK_BUTTON(toggle)));
+                gtk_toggle_button_set_active (toggle, TRUE);
+            }
+    }else{        
             gam_mixer = GAM_MIXER (priv->mixer);
 
             for (i = 0; i < g_slist_length (priv->slider_toggles); i++) {

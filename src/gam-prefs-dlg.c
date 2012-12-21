@@ -186,6 +186,10 @@ static GObject *gam_prefs_dlg_constructor (GType                  type,
     gam_app = GAM_APP (priv->app);
 
     gtk_dialog_add_button (GTK_DIALOG (gam_prefs_dlg),
+                           GTK_STOCK_REVERT_TO_SAVED,
+                           GTK_RESPONSE_APPLY);
+
+    gtk_dialog_add_button (GTK_DIALOG (gam_prefs_dlg),
                            GTK_STOCK_CLOSE,
                            GTK_RESPONSE_CLOSE);
 
@@ -398,11 +402,19 @@ gam_prefs_dlg_response_handler (GtkDialog *dialog, gint res_id, GamPrefsDlg *gam
     gint i, style;
 
     priv = GAM_PREFS_DLG_GET_PRIVATE (gam_prefs_dlg);
+    gam_app = GAM_APP (priv->app);
 
-    switch (res_id) {
-        default:
-            gam_app = GAM_APP (priv->app);
+    if(res_id==GTK_RESPONSE_APPLY) {
+            for (i = 0; i < gam_app_get_num_cards (gam_app); i++) {
+                mixer = gam_app_get_mixer (gam_app, i);
 
+                entry = GTK_ENTRY (g_slist_nth_data (priv->entries, i));
+                toggle = GTK_TOGGLE_BUTTON (g_slist_nth_data (priv->toggles, i));
+
+                gtk_entry_set_text (entry, gtk_button_get_label (GTK_BUTTON(toggle)));
+                gtk_toggle_button_set_active (toggle, TRUE);
+            }
+    }else{        
             if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (priv->mixer_slider_style_0)))
                 style = 0;
             else
