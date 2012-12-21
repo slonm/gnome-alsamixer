@@ -1,0 +1,19 @@
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
+src/gam-app.c
+src/gam-app.h
+src/gam-main.c
+src/gam-mixer.c
+src/gam-mixer.h
+src/gam-prefs-dlg.c
+src/gam-prefs-dlg.h
+src/gam-props-dlg.c
+src/gam-props-dlg.h
+src/gam-slider-dual.c
+src/gam-slider-dual.h
+src/gam-slider-pan.c
+src/gam-slider-pan.h
+src/gam-slider.c
+src/gam-slider.h
+src/gam-toggle.c
+src/gam-toggle.h

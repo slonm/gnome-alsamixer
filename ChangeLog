@@ -1,0 +1,280 @@
+2006-08-06  Arangel Angov <ufo@linux.net.mk>
+
+	* configure.ac: Added 'mk' for Macedonian to ALL_LINGUAS.
+
+2006-04-18  Kjartan Maraas <kmaraas@gnome.org>
+
+	* configure.ac: Cruft removal.
+	* po/no.po:
+
+2006-04-11  Pema Geyleg  <pema.geyleg@gmail.com>
+
+	* configure.ac: Added dz (Dzongkha) in ALL_LINGUAS.
+
+2006-01-24  Clytie Siddall <clytie@riverland.net.au>
+
+	* configure.in	Added vi in ALL_LINGUAS line.
+	
+	2006-01-07  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* configure.ac: Add nb to ALL_LINGUAS.
+
+2005-08-24  Pawan Chitrakar  <pchitrakar@gmail.com>
+
+	* configure.ac: Added ne in ALL_LINGUAS
+
+Mon Aug 15 2005 Ilkka Tuohela <hile@iki.fi>
+
+	* configure.ac: Added Finnish translation to ALL_LINGUAS.
+
+Fri Jul  7 2005 Derrick J Houy <djhouy@paw.za.org>
+
+    * completed migration to GConf
+    * configure.ac:
+      - define HAVE_GTK26 if GTK+ version >= 2.6
+    * src/gam-app.c:
+      - use gtk_show_about_dialog if GTK+ version >= 2.6
+    * src/gam-app.h, src/gam-mixer.c, src/gam-slider.c, src/gam-toggle.c:
+      - added GAM_CONFIG_DELIMITERS to specify the characters to be replaced
+        in keys used by GConf
+
+Thu Jul  7 2005 Derrick J Houy <djhouy@paw.za.org>
+
+    * src/gam-app.c, src/gam-mixer.c:
+      - fixed a bug where priv-> is used before it is set.
+
+Wed Jul  6 2005 Derrick J Houy <djhouy@paw.za.org>
+
+    * re-write of autogen.sh to not rely on gnome-common
+    * re-structured configure.in -- bumped version number to 0.9.7
+    * removed gam_app_finalize, added gam_app_destroy
+    * changed gam_app_delete_cd to gam_app_delete
+    * changed menus and toolbar to work with GtkUIManager instead of GnomeUIInfo
+      - changed layout of menus to be more clear
+    * changed private data structures to use GType private data functionality
+    * including <glib/gi18n.h> instead of <libgnome/gnome-i18n.h>
+    * started migration to GConf
+
+2005-06-14  Christian Rose  <menthos@menthos.com>
+
+	* configure.ac: Added "gl" to ALL_LINGUAS.
+
+2005-04-14  Abel Cheung  <maddog@linuxhall.org>
+
+	* configure.ac: Added "zh_TW" to ALL_LINGUAS.
+
+2004-07-31  Jordi Mallach  <jordi@sindominio.net>
+
+	* configure.ac (ALL_LINGUAS): Added "ca" (Catalan).
+
+2004-05-01  Adam Weinberger  <adamw@gnome.org>
+
+	* configure.in: Added en_CA to ALL_LINGUAS.
+
+2004-04-24  Andras Timar  <timar@gnome.hu>
+
+	* configure.ac: Added hu to ALL_LINGUAS.
+
+2004-04-07  Yuriy Syrota  <rasta@cvs.gnome.org>
+
+	* configure.ac: Added "uk" (Ukrainian) into ALL_LINGUAS.
+
+2004-03-29  Gareth Owen  <gowen72@yahoo.com>
+
+	* configure.ac: Added en_GB to ALL_LINGUAS
+
+2004-03-28  Takeshi AIHANA <aihana@gnome.gr.jp>
+
+	* configure.ac: Added ja "Japanese" into ALL_LINGUAS.
+
+2004-03-15  Gustavo Noronha Silva  <kov@debian.org>
+
+	* configure.ac: added pt_BR (Brazilian Portuguese) to
+	  ALL_LINGUAS.
+
+2004-03-04  Guntupalli Karunakar  <karunakar@freedomink.org>
+
+	* configure.ac: Added "pa" (Punjabi) to ALL_LINGUAS.
+
+2004-02-21  Paisa Seeluangsawat  <paisa@users.sf.net>
+
+	* configure.ac: Added Thai (th) to ALL_LINGUAS.
+
+2004-02-05  Robert Sedak  <robert.sedak@sk.htnet.hr>
+
+	* configure.ac: Added "hr" (Croatian) to ALL_LINGUAS.
+
+2004-01-17  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* configure.ac: Added "no" to ALL_LINGUAS.
+
+2004-01-08  Iñaki Larrañaga  <dooteo@euskalgnu.org>
+
+	* configure.ac: Added "eu" (Basque) to ALL_LINGUAS.
+
+2003-12-16  Stanislav Visnovsky <visnovsky@nenya.ms.mff.cuni.cz>
+
+	* configure.ac:  Added Slovak "sk" to ALL_LINGUAS.
+
+2003-12-04  Sanlig Badral  <badral@openmn.org>
+
+	* configure.ac:  Added Mongolian "mn" to ALL_LINGUAS.
+
+2003-11-23  Christian Neumair  <chris@gnome-de.org>
+
+	* configure.ac: Added German (de) to ALL_LINGUAS.
+
+2003-11-12  Duarte Loreto <happyguy_pt@hotmail.com>
+
+	* configure.ac: Added pt (Portuguese) to ALL_LINGUAS.
+
+2003-11-11  Pablo Gonzalo del Campo  <pablodc@bigfoot.com>
+
+	* configure.ac: Added es (Spanish) to ALL_LINGUAS.
+
+2003-10-28  Derrick J Houy  <djhouy@paw.za.org>
+
+	* src/gam-app.c:
+	  Changed hyphen in about box copyright message to en-dash.
+
+2003-10-28  Miloslav Trmac  <mitr@volny.cz>
+
+	* configure.ac: Added cs (Czech) to ALL_LINGUAS.
+
+2003-10-27  Derrick J Houy  <djhouy@paw.za.org>
+
+	* src/gam-prefs-dlg.c, src/gam-props-dlg.c:
+	  Bug 125377 - Remove unnecessary markup from messages.
+
+	* po.POTFILES.in:
+	  Removed the UTF-8 encoding requirement.
+
+	* src/gam-app.c:
+	  Removed the about box copyright message from translation.
+
+2003-10-26  Metin Amiroff  <metin@karegen.com>
+
+	* configure.in: Added az to ALL_LINGUAS.
+
+2003-10-25  Danilo Šegan  <dsegan@gmx.net>
+
+	* configure.ac: Added "sr" and "sr@Latn" to ALL_LINGUAS.
+
+2003-10-24  Christian Rose  <menthos@menthos.com>
+
+	* configure.ac: Added "sv" to ALL_LINGUAS.
+
+Fri Sep 12 2003 Derrick J Houy <djhouy@paw.za.org>
+
+    * src/gam-app.c:
+      Added localization where it was missing.
+      Added g_free () for some gchar variables.
+      Extra cleanup in gam_mixer_finalize.
+      Replaced some g_return_if_fail macros with if statements, so the logic
+      still works when G_DISABLE_CHECKS is used.
+      Added extra g_return_[val_]if_fail macros where needed.
+
+    * src/gam-slider:
+      Removed gam_slider_real_resfresh, placing code in gam_slider_refresh --
+      fixes bug where mute and capture buttons were not updating.
+
+Wed Sep 10 2003 Derrick J Houy <djhouy@paw.za.org>
+
+    * configure.za, po/fr.po: added French translation from
+      Stephane Tranchemer <stephane.tranchemer@devinci.fr>
+
+Tue Sep  9 2003 Derrick J Houy <djhouy@paw.za.org>
+
+    * src/gam-slider.c, src/gam-slider-dual.c, src/gam-prefs-dlg.c:
+      Added option to change slider toggles to checkboxes instead of buttons.
+      Set this as the application default.
+
+    * src/gam-slider-dual.c: fixed refresh bug.
+
+    * src/gam-props-dlg.c: HIG'ified dialog.
+
+Mon Sep  8 2003 Derrick J Houy <djhouy@paw.za.org>
+
+    * Changelog: changed format.
+
+    * acconfig.h: removed.
+
+    * configure.ac: added --enable-debug option, and other defines to disable
+      checks when debug option is not used - results in much smaller binary.
+      Bumped up version number to 0.9.6.
+
+    * gnome-alsamixer.desktop: removed.
+
+    * Makefile.am: removed references to gnome-alsamixer.desktop.
+
+    * gnome-alsamixer.spec.in: added creation and installation of
+      gnome-alsamixer.desktop here.
+      Changed co.za addresses to za.org.
+      Added extra BuildRequires.
+      Added -q -n gnome-alsamixer-%{version} to %setup.
+
+* Mon Sep  8 2003 Derrick J Houy <djhouy@paw.za.org> - 0.9.5
+- Added new optional dual slider with lock button
+- Added slider style option to preferences dialog
+- HIG'ified preferences dialog
+
+* Wed Aug 27 2003 Derrick J Houy <djhouy@paw.za.org> - 0.9.4
+- Moved various gam_app data to private structure
+- Replaced gam_app_destroy with gam_app_finalize
+- Added gam_app_ prefix to functions that were missing it
+- Removed prog argument from gam_app_new
+
+- Moved various gam_mixer data to private structure
+- Removed gam_mixer_set_card_id function
+- Added app property to gam_mixer->priv, to reference parent application
+
+- Moved various gam_slider data to private structure
+- Moved gam_slider_set_elem to private function
+- In gam_slider_refresh, changed mask property from unsigned int to guint,
+  and changed return value from int to gint
+- Added g_object_notify for mixer property to gam_slider_set_property
+- Removed gam_slider_get_elem function
+- Added gam_slider_ prefix to functions that were missing it
+- Cleaned up some untidy code
+
+- Moved various gam_toggle data to private structure
+- Moved gam_toggle_set_elem to private function
+- In gam_toggle_refresh, changed mask property from unsigned int to guint,
+  and changed return value from int to gint
+- Added g_object_notify for mixer property to gam_toggle_set_property
+- Removed gam_toggle_get_elem function
+- Added gam_toggle_ prefix to functions that were missing it
+- Cleaned up some untidy code
+
+- Added option to set mnemonics for sliders and toggles by using an underscore
+  in the controls display name
+
+- Removed app property from gam_mixer
+
+* Wed Dec 18 2002 Derrick J Houy <djhouy@paw.za.org> - 0.9.3
+- Improved toggle layout
+- Improved state updating
+- Improved toggle state handling
+
+* Tue Dec 10 2002 Derrick J Houy <djhouy@paw.za.org> - 0.9.2
+- Added state update capability
+
+* Fri Nov 22 2002 Derrick J Houy <djhouy@paw.za.org> - 0.9.1
+- Added support for multiple sound cards
+- Added program preferences dialog
+- Started mixer properties dailog
+
+* Fri Nov 15 2002 Derrick J Houy <djhouy@paw.za.org> - 0.9.0
+- Re-coded for GNOME2
+
+* Fri Sep 22 2002 Derrick J Houy <djhouy@paw.co.za> - 0.1.2beta
+- Fixed preferences dialog crash
+- Fixed exclusive mode record buttons
+- Changed call back for capture mode switches
+
+* Thu Sep 22 2002 Derrick J Houy <djhouy@paw.co.za> - 0.1.1beta
+- Added preferences dialog to change visibility and named of controls
+- Added scollable region for sliders, so mixer does not go wider than screen
+- Added save and restore of application window size
+- Hopefully fixed startup issues with SBLive and Ensoniq cards
+- Lots of bug fixes

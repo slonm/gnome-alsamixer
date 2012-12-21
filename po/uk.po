@@ -1,0 +1,160 @@
+# Ukrainian translation of the gnome-alsamixer module.
+# Copyright (C) 1999 Free Software Foundation, Inc.
+# Yuri Syrota <rasta@renome.rovno.ua>, 2004
+# Maxim Dziumanenko <mvd@mylinux.ua>, 2005 
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-alsamixer\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-08-12 01:08+0300\n"
+"PO-Revision-Date: 2005-08-12 11:21+0300\n"
+"Last-Translator: Maxim Dziumanenko <mvd@mylinux.ua>\n"
+"Language-Team: Ukrainian <uk@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/gam-app.c:92
+msgid "_File"
+msgstr "_Файл"
+
+#: ../src/gam-app.c:93
+msgid "_Edit"
+msgstr "_Правка"
+
+#: ../src/gam-app.c:94
+msgid "_Help"
+msgstr "_Довідка"
+
+#: ../src/gam-app.c:95
+msgid "E_xit"
+msgstr "Ви_хід"
+
+#: ../src/gam-app.c:95
+msgid "Exit the program"
+msgstr "Вихід з програми"
+
+#: ../src/gam-app.c:96
+msgid "Sound Card _Properties"
+msgstr "В_ластивості звукової карти"
+
+#: ../src/gam-app.c:96
+msgid "Configure the current sound card"
+msgstr "Налаштувати поточну звукову карту"
+
+#: ../src/gam-app.c:97
+msgid "Program Prefere_nces"
+msgstr "П_араметри програми"
+
+#: ../src/gam-app.c:97
+msgid "Configure the application"
+msgstr "Налаштовування програми"
+
+#: ../src/gam-app.c:98
+msgid "_About"
+msgstr "_Про програму"
+
+#: ../src/gam-app.c:98
+msgid "About this application"
+msgstr "Про цю програму"
+
+#: ../src/gam-app.c:429
+msgid "Contributors:"
+msgstr "Учасники:"
+
+#: ../src/gam-app.c:438 ../src/gam-app.c:448
+msgid "An ALSA mixer for GNOME"
+msgstr "Мікшер до ALSA для GNOME"
+
+#: ../src/gam-app.c:440 ../src/gam-app.c:446 ../src/gam-app.c:578
+#: ../src/gam-main.c:44
+msgid "GNOME ALSA Mixer"
+msgstr "Мікшер до ALSA для GNOME"
+
+#: ../src/gam-mixer.c:159 ../src/gam-mixer.c:160 ../src/gam-slider.c:156
+#: ../src/gam-slider.c:157 ../src/gam-toggle.c:127 ../src/gam-toggle.c:128
+msgid "Main Application"
+msgstr "Головна програма"
+
+#: ../src/gam-mixer.c:166
+msgid "Card ID"
+msgstr "Ідентифікатор плати"
+
+#: ../src/gam-mixer.c:167
+msgid "ALSA Card ID (usually 'default')"
+msgstr "Ідентифікатор плати ALSA (зазвичай \"default\")"
+
+#: ../src/gam-prefs-dlg.c:115
+msgid "App"
+msgstr "Програма"
+
+#: ../src/gam-prefs-dlg.c:116
+msgid "Parent Application"
+msgstr "Батьківська програма"
+
+#: ../src/gam-prefs-dlg.c:213
+msgid "Sound Card Names and Visibility"
+msgstr "Назви і видимість звукових карт"
+
+#: ../src/gam-prefs-dlg.c:268
+msgid "Slider Style"
+msgstr "Тип повзунка"
+
+#: ../src/gam-prefs-dlg.c:285
+msgid "_Single slider with pan"
+msgstr "_Одинарний повзунок з прокручуванням"
+
+#: ../src/gam-prefs-dlg.c:288
+msgid "_Dual slider with lock"
+msgstr "_Подвійний повзунок із блокуванням"
+
+#: ../src/gam-prefs-dlg.c:309
+msgid "Slider Toggle Style"
+msgstr "Стиль перемикача повзунка"
+
+#: ../src/gam-prefs-dlg.c:326
+msgid "_Button"
+msgstr "_Кнопка"
+
+#: ../src/gam-prefs-dlg.c:329
+msgid "_Checkbox"
+msgstr "_Вимикач"
+
+#: ../src/gam-prefs-dlg.c:338
+msgid "Program Preferences"
+msgstr "Параметри програми"
+
+#: ../src/gam-props-dlg.c:112 ../src/gam-props-dlg.c:113
+#: ../src/gam-slider.c:149 ../src/gam-slider.c:150 ../src/gam-toggle.c:120
+#: ../src/gam-toggle.c:121
+msgid "Mixer"
+msgstr "Мікшер"
+
+#: ../src/gam-props-dlg.c:227
+msgid "Sound Card Element Names and Visibility"
+msgstr "Назви та видимість елементів звукової карти"
+
+#: ../src/gam-props-dlg.c:298
+msgid "Sound Card Properties"
+msgstr "Властивості звукової карти"
+
+#: ../src/gam-slider-dual.c:207 ../src/gam-slider-dual.c:209
+msgid "Lock"
+msgstr "Спільн."
+
+#: ../src/gam-slider.c:142 ../src/gam-toggle.c:113
+msgid "Element"
+msgstr "Елемент"
+
+#: ../src/gam-slider.c:143 ../src/gam-toggle.c:114
+msgid "ALSA mixer element"
+msgstr "Елемент мікшера"
+
+#: ../src/gam-slider.c:251 ../src/gam-slider.c:253
+msgid "Mute"
+msgstr "Вимкн."
+
+#: ../src/gam-slider.c:269 ../src/gam-slider.c:271
+msgid "Rec."
+msgstr "Запис"

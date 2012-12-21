@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="gnome-alsamixer-0.9.7~cvs.20060916.ds.1" root=".">
+      <df name="debian">
+        <df name="gnome-alsamixer">
+          <df name="DEBIAN">
+          </df>
+          <df name="usr">
+            <df name="bin">
+            </df>
+            <df name="share">
+              <df name="applications">
+              </df>
+              <df name="doc">
+                <df name="gnome-alsamixer">
+                </df>
+              </df>
+              <df name="gconf">
+                <df name="schemas">
+                </df>
+              </df>
+              <df name="locale">
+                <df name="az">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="ca">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="cs">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="de">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="dz">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="el">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="en_CA">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="en_GB">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="es">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="eu">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="fi">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="fr">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="gl">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="hr">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="hu">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="ja">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="mk">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="mn">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="nb">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="ne">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="nl">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="pa">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="pt">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="pt_BR">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="sk">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="sq">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="sr">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="sr@Latn">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="sv">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="th">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="uk">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="vi">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="zh_CN">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+                <df name="zh_TW">
+                  <df name="LC_MESSAGES">
+                  </df>
+                </df>
+              </df>
+              <df name="man">
+                <df name="man1">
+                </df>
+              </df>
+              <df name="menu">
+              </df>
+              <df name="pixmaps">
+                <df name="gnome-alsamixer">
+                </df>
+              </df>
+            </df>
+          </df>
+        </df>
+        <df name="patches">
+        </df>
+      </df>
+      <df name="macros">
+      </df>
+      <df name="pixmaps">
+      </df>
+      <df name="po">
+      </df>
+      <df name="src">
+        <in>gam-app.c</in>
+        <in>gam-app.h</in>
+        <in>gam-main.c</in>
+        <in>gam-mixer.c</in>
+        <in>gam-mixer.h</in>
+        <in>gam-prefs-dlg.c</in>
+        <in>gam-prefs-dlg.h</in>
+        <in>gam-props-dlg.c</in>
+        <in>gam-props-dlg.h</in>
+        <in>gam-slider-dual.c</in>
+        <in>gam-slider-dual.h</in>
+        <in>gam-slider-pan.c</in>
+        <in>gam-slider-pan.h</in>
+        <in>gam-slider.c</in>
+        <in>gam-slider.h</in>
+        <in>gam-toggle.c</in>
+        <in>gam-toggle.h</in>
+      </df>
+      <in>config.h</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Важные файлы"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+      <itemPath>configure</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath>src/gnome-alsamixer</executablePath>
+          <cTool>
+            <incDir>
+              <pElem>/usr/include/libgnomecanvas-2.0</pElem>
+              <pElem>/usr/lib/x86_64-linux-gnu/dbus-1.0/include</pElem>
+              <pElem>/usr/include/libbonoboui-2.0</pElem>
+              <pElem>/usr/lib/x86_64-linux-gnu/gnome-vfs-2.0/include</pElem>
+              <pElem>/usr/include/gtk-2.0</pElem>
+              <pElem>/usr/include/gconf/2</pElem>
+              <pElem>/usr/include/orbit-2.0</pElem>
+              <pElem>/usr/lib/x86_64-linux-gnu/glib-2.0/include</pElem>
+              <pElem>/usr/include/cairo</pElem>
+              <pElem>/usr/include/gnome-vfs-2.0</pElem>
+              <pElem>/usr/include/pixman-1</pElem>
+              <pElem>/usr/include/libgnome-2.0</pElem>
+              <pElem>/usr/include/alsa</pElem>
+              <pElem>/usr/include/gdk-pixbuf-2.0</pElem>
+              <pElem>/usr/include/libart-2.0</pElem>
+              <pElem>/usr/include/freetype2</pElem>
+              <pElem>/usr/include/bonobo-activation-2.0</pElem>
+              <pElem>/usr/include/atk-1.0</pElem>
+              <pElem>src</pElem>
+              <pElem>/usr/include/dbus-1.0</pElem>
+              <pElem>/usr/include/libpng12</pElem>
+              <pElem>/usr/lib/x86_64-linux-gnu/gtk-2.0/include</pElem>
+              <pElem>/usr/include/libxml2</pElem>
+              <pElem>/usr/include/glib-2.0</pElem>
+              <pElem>.</pElem>
+              <pElem>/usr/include/pango-1.0</pElem>
+              <pElem>/usr/include/libbonobo-2.0</pElem>
+              <pElem>/usr/include/gail-1.0</pElem>
+              <pElem>/usr/include/libgnomeui-2.0</pElem>
+              <pElem>/usr/include/gnome-keyring-1</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>GDK_DISABLE_DEPRECATED</Elem>
+              <Elem>GNOME_DISABLE_DEPRECATED</Elem>
+              <Elem>GTK_DISABLE_DEPRECATED</Elem>
+              <Elem>G_DISABLE_DEPRECATED</Elem>
+              <Elem>HAVE_CONFIG_H</Elem>
+              <Elem>ORBIT2=1</Elem>
+              <Elem>PACKAGE_DATA_DIR="/usr/share/gnome-alsamixer"</Elem>
+              <Elem>PACKAGE_LOCALE_DIR="/usr/share/locale"</Elem>
+              <Elem>PIXMAP_ICONDIR="/usr/share/pixmaps/gnome-alsamixer"</Elem>
+              <Elem>_FORTIFY_SOURCE=2</Elem>
+              <Elem>_REENTRANT</Elem>
+              <Elem>__SSP__=1</Elem>
+            </preprocessorList>
+          </cTool>
+        </makeTool>
+      </makefileType>
+      <item path="src/gam-app.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/gam-main.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/gam-mixer.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/gam-prefs-dlg.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/gam-props-dlg.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/gam-slider-dual.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/gio-unix-2.0/</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/gam-slider-pan.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/gam-slider.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
+          </incDir>
+        </cTool>
+      </item>
+      <item path="src/gam-toggle.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+          <incDir>
+            <pElem>/usr/include/gio-unix-2.0</pElem>
+          </incDir>
+        </cTool>
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
