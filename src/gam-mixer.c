@@ -704,3 +704,22 @@ gam_mixer_construct_sliders (GamMixer *gam_mixer)
         }
     }
 }
+
+const char *
+gam_mixer_create_elem_name(snd_mixer_elem_t *elem){
+    unsigned int index;
+    char *s, *name;
+
+    index = snd_mixer_selem_get_index(elem);
+    if (index > 0){  
+        name = strcat(strdup(snd_mixer_selem_get_name(elem)),"1234");
+        sprintf(name, "%s %u", snd_mixer_selem_get_name(elem), index);
+    }
+    else
+        name = strdup(snd_mixer_selem_get_name(elem));
+
+    while ((s = strstr(name, "IEC958")) != NULL)
+        memcpy(s, "S/PDIF", 6);
+    return name;
+}
+

@@ -339,7 +339,7 @@ gam_toggle_get_state (GamToggle *gam_toggle)
         snd_mixer_selem_get_capture_switch (priv->elem, 0, &value);
     } else {
         g_warning ("%s (). No idea what to do for mixer element \"%s\"!",
-                   __FUNCTION__, snd_mixer_selem_get_name (priv->elem));
+                   __FUNCTION__, gam_mixer_create_elem_name(priv->elem));
     }
 
     return value;
@@ -362,7 +362,7 @@ gam_toggle_set_state (GamToggle *gam_toggle, gboolean state)
         err = snd_mixer_selem_set_capture_switch_all (priv->elem, state);
     } else {
         g_warning ("%s (). No idea what to do for mixer element \"%s\"!",
-                   __FUNCTION__, snd_mixer_selem_get_name (priv->elem));
+                   __FUNCTION__, gam_mixer_create_elem_name(priv->elem));
         err = 0;
     }
 
@@ -380,7 +380,7 @@ gam_toggle_get_name (GamToggle *gam_toggle)
 
     priv = GAM_TOGGLE_GET_PRIVATE (gam_toggle);
 
-    return snd_mixer_selem_get_name (priv->elem);
+    return gam_mixer_create_elem_name(priv->elem);
 }
 
 const gchar *

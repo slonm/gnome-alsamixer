@@ -74,6 +74,7 @@ GamToggle            *gam_mixer_get_nth_toggle    (GamMixer    *gam_mixer,
                                                    gint         index);
 void                  gam_mixer_construct_sliders (GamMixer    *gam_mixer);
 
+const char           *gam_mixer_create_elem_name(snd_mixer_elem_t *elem);
 
 G_END_DECLS
 

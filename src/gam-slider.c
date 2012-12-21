@@ -449,7 +449,7 @@ gam_slider_get_name (GamSlider *gam_slider)
 
     priv = GAM_SLIDER_GET_PRIVATE (gam_slider);
 
-    return snd_mixer_selem_get_name (priv->elem);
+    return gam_mixer_create_elem_name(priv->elem);
 }
 
 const gchar *
@@ -479,7 +479,7 @@ gam_slider_get_display_name (GamSlider *gam_slider)
 
     priv = GAM_SLIDER_GET_PRIVATE (gam_slider);
 
-    disp_name = g_strndup (gam_slider_get_name (gam_slider), 8);
+    disp_name = g_strdup (gam_slider_get_name (gam_slider));
 
     key = g_strdup_printf ("/apps/gnome-alsamixer/slider_display_names/%s-%s",
                            gam_mixer_get_config_name (GAM_MIXER (priv->mixer)),
