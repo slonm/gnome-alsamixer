@@ -26,9 +26,6 @@
 #include <gtk/gtknotebook.h>
 #include <gtk/gtkmenuitem.h>
 #include <glib/gi18n.h>
-#include <libgnomeui/gnome-about.h>
-/*#include <libgnomeui/gnome-app-helper.h>*/
-#include <libgnomeui/gnome-stock-icons.h>
 
 #include "gam-app.h"
 #include "gam-mixer.h"
@@ -103,7 +100,7 @@ static GtkActionEntry action_entries[] = {
   { "Exit", GTK_STOCK_OPEN, N_("E_xit"), "<control>Q", N_("Exit the program"), G_CALLBACK (gam_app_quit_cb) },
   { "Properties", GTK_STOCK_PROPERTIES, N_("Sound Card _Properties"), "", N_("Configure the current sound card"), G_CALLBACK (gam_app_properties_cb) },
   { "Preferences", GTK_STOCK_PREFERENCES, N_("Program Prefere_nces"), "", N_("Configure the application"), G_CALLBACK (gam_app_preferences_cb) },
-  { "About", GNOME_STOCK_ABOUT, N_("_About"), "", N_("About this application"), G_CALLBACK (gam_app_about_cb) }
+  { "About", GTK_STOCK_ABOUT, N_("_About"), "", N_("About this application"), G_CALLBACK (gam_app_about_cb) }
 };
 
 enum{
@@ -287,7 +284,7 @@ gam_app_constructor (GType                  type,
     g_signal_connect (G_OBJECT (gam_app), "delete_event",
                       G_CALLBACK (gam_app_delete), NULL);
 
-    gnome_window_icon_set_default_from_file (PIXMAP_ICONDIR"/gnome-alsamixer-icon.png");
+    gtk_window_set_icon_from_file (GTK_WINDOW (gam_app), PIXMAP_ICONDIR"/gnome-alsamixer-icon.png", NULL);
 
     // Build the main menu and toolbar
     gtk_action_group_add_actions (priv->main_action_group, action_entries,
@@ -469,7 +466,6 @@ gam_app_about_cb (GtkWidget *widget, gpointer data)
         NULL
     };
 
-#ifdef HAVE_GTK26
     gtk_show_about_dialog (GTK_WINDOW (data),
                            "authors", authors,
                            "comments", _("An ALSA mixer for GNOME"),
@@ -477,21 +473,6 @@ gam_app_about_cb (GtkWidget *widget, gpointer data)
                            "name", _("GNOME ALSA Mixer"),
                            "version", VERSION,
                            NULL);
-#else
-    GtkWidget *about;
-
-    about = gnome_about_new (_("GNOME ALSA Mixer"), VERSION,
-                             "\302\251 2001\342\200\2232005 PAW Digital Dynamics",
-                             _("An ALSA mixer for GNOME"),
-                             authors,
-                             NULL,
-                             NULL,
-                             NULL);
-    gtk_widget_set_name (about, "about");
-    gtk_window_set_wmclass (GTK_WINDOW (about), "GAMAbout", "GAMAbout");
-    gtk_window_set_destroy_with_parent (GTK_WINDOW (about), TRUE);
-    gtk_widget_show (about);
-#endif
 }
 
 static void
@@ -525,7 +506,7 @@ static void
 gam_app_view_mixers_cb (GtkAction *action, GtkRadioAction *current, GamApp *gam_app)
 {
     GamAppPrivate *priv;
-    g_return_if_fail (GAM_IS_MIXER (gam_mixer));
+    
     priv = GAM_APP_GET_PRIVATE (gam_app);
     
     GamMixer *gam_mixer=gam_app_get_current_mixer(gam_app);

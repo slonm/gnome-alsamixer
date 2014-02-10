@@ -11,13 +11,13 @@
 #define GETTEXT_PACKAGE "gnome-alsamixer"
 
 /* "" */
-#define G_DISABLE_ASSERT 
+#define G_DISABLE_ASSERT /**/
 
 /* "" */
-#define G_DISABLE_CAST_CHECKS 
+#define G_DISABLE_CAST_CHECKS /**/
 
 /* "" */
-#define G_DISABLE_CHECKS 
+#define G_DISABLE_CHECKS /**/
 
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 #define HAVE_BIND_TEXTDOMAIN_CODESET 1
@@ -29,7 +29,7 @@
 #define HAVE_GETTEXT 1
 
 /* "" */
-#define HAVE_GTK26 
+#define HAVE_GTK26 /**/
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -81,6 +81,9 @@
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gnome-alsamixer"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "0.9.7"

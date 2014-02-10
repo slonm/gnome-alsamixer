@@ -22,7 +22,6 @@
 #include <config.h>
 #endif
 
-#include <libgnomeui/gnome-ui-init.h>
 #include <glib/gi18n.h>
 
 #include "gam-app.h"
@@ -30,8 +29,9 @@
 int
 main (int argc, char *argv[])
 {
+    gboolean prog;
     GtkWidget *app;
-    GnomeProgram *prog;
+    GError *error = NULL;
 
 #ifdef ENABLE_NLS
     bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
@@ -39,11 +39,12 @@ main (int argc, char *argv[])
     textdomain (GETTEXT_PACKAGE);
 #endif
 
-    prog = gnome_program_init (PACKAGE, VERSION, LIBGNOMEUI_MODULE,
-                               argc, argv,
-                               GNOME_PARAM_HUMAN_READABLE_NAME, _("GNOME ALSA Mixer"),
-                               GNOME_PARAM_APP_DATADIR, PACKAGE_DATA_DIR,
-                               NULL);
+    prog = gtk_init_with_args (
+				&argc, &argv, NULL, NULL, GETTEXT_PACKAGE, &error);
+    if (error != NULL) {
+    g_printerr ("%s\n", error->message);
+    exit (1);
+    }
 
     if (!prog)
         return 1;

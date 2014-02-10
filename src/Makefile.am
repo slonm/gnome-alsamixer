@@ -4,10 +4,6 @@ INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)/gnome-alsamixer"\"        \
 	-DPIXMAP_ICONDIR=\""$(datadir)/pixmaps/gnome-alsamixer"\"  \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-	-DG_DISABLE_DEPRECATED					   \
-	-DGDK_DISABLE_DEPRECATED				   \
-	-DGTK_DISABLE_DEPRECATED				   \
-	-DGNOME_DISABLE_DEPRECATED                                 \
 	@PACKAGE_CFLAGS@
 
 bin_PROGRAMS = gnome-alsamixer

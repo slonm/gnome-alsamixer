@@ -321,7 +321,7 @@ gam_enum_refresh (snd_mixer_elem_t *elem, guint mask)
 
     GamEnumPrivate *priv;
 
-    g_return_val_if_fail (GAM_IS_ENUM (gam_enum), NULL);
+    g_return_val_if_fail (GAM_IS_ENUM (gam_enum), 0);
 
     priv = GAM_ENUM_GET_PRIVATE (gam_enum);
     

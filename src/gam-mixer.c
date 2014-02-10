@@ -423,6 +423,9 @@ gam_mixer_construct_elements (GamMixer *gam_mixer)
                   toggle = gam_enum_new (elem, gam_mixer, GAM_APP (priv->app));
                   gtk_box_pack_start (GTK_BOX (vbox),
                                       toggle, FALSE, FALSE, 0);
+#ifdef DEBUG
+    g_message ("%s - %d: created enum '%s'", __FILE__, __LINE__, gam_mixer_create_elem_name(elem));
+#endif
                 }  
                 else
                 {    

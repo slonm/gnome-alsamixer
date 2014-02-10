@@ -687,7 +687,7 @@ void
 gam_slider_update_visibility (GamSlider *gam_slider){
     GamSliderPrivate *priv;
 
-    g_return_if_fail (GAM_IS_ENUM (gam_slider));
+    g_return_if_fail (GAM_IS_SLIDER (gam_slider));
 
     priv = GAM_SLIDER_GET_PRIVATE (gam_slider);
 

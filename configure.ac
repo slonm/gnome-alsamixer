@@ -32,7 +32,7 @@ if test x$have_gtk26 = xyes ; then
     AC_DEFINE_UNQUOTED(HAVE_GTK26, , "")
 fi
 
-pkg_modules="libgnomeui-2.0 gconf-2.0 alsa"
+pkg_modules="gtk+-2.0 gconf-2.0 alsa"
 PKG_CHECK_MODULES(PACKAGE, [$pkg_modules])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)

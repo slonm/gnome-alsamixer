@@ -17,12 +17,10 @@ URL:       http://www.paw.za.org/projects/@PACKAGE@
 BuildRoot: /var/tmp/@PACKAGE@-%{PACKAGE_VERSION}-root
 
 Requires: gtk2 >= 2.4.0
-Requires: libgnomeui >= 2.4.0
 Requires: GConf2 >= 2.8.0
 Requires: alsa-lib >= 0.9.0
 
 BuildRequires: gtk2-devel >= 2.0.0
-BuildRequires: libgnomeui-devel >= 2.0.0
 BuildRequires: GConf2-devel >= 2.8.0
 BuildRequires: alsa-lib >= 0.9.0
 BuildRequires: desktop-file-utils

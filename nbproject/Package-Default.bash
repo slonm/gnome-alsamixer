@@ -12,8 +12,8 @@ CND_DISTDIR=dist
 CND_BUILDDIR=build
 NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=MissingOutputInProject
-OUTPUT_BASENAME=MissingOutputInProject
+OUTPUT_PATH=src/gnome-alsamixer
+OUTPUT_BASENAME=gnome-alsamixer
 PACKAGE_TOP_DIR=gnome-alsamixer-0.9.7~cvs.20060916.ds.1/
 
 # Functions
@@ -59,7 +59,7 @@ mkdir -p ${NBTMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory "${NBTMPDIR}/gnome-alsamixer-0.9.7~cvs.20060916.ds.1"
+makeDirectory "${NBTMPDIR}/gnome-alsamixer-0.9.7~cvs.20060916.ds.1/bin"
 copyFileToTmpDir "${OUTPUT_PATH}" "${NBTMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
 
 
